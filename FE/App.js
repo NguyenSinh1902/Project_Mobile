@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import GetStarted from './components/GetStarted';
+import Register from './components/Register';
+import Login from './components/Login';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +16,16 @@ const App = () => {
         <Stack.Screen 
           name="GetStarted" 
           component={GetStarted} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Register" 
+          component={Register} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Login" 
+          component={Login} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
