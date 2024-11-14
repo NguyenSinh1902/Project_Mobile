@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import GetStarted from './components/GetStarted';
 import Register from './components/Register';
 import Login from './components/Login';
+import HomePage from './components/HomePage'; // Import HomePage component
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,11 @@ const App = () => {
         <Stack.Screen 
           name="Login" 
           component={Login} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="HomePage" 
+          component={HomePage} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
