@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule và ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Location } from './locations/location.entity';
 import { Accommodation } from './accommodations/accommodation.entity';
 import { Promotion } from './promotions/promotion.entity';
@@ -11,17 +11,18 @@ import { Booking } from './bookings/booking.entity';
 import { Customer } from './customers/customer.entity';
 import { Amenity } from './amenities/amenity.entity';
 
+import { CustomerModule } from './customers/customer.module';
+
 @Module({
   imports: [
-    // Đảm bảo load biến môi trường từ file .env
-    ConfigModule.forRoot(), // Cấu hình để đọc các biến từ .env
+    ConfigModule.forRoot(),
 
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule], // Import ConfigModule để sử dụng trong TypeOrmModule
-      inject: [ConfigService], // Inject ConfigService vào để lấy giá trị từ biến môi trường
+      imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get<string>('DB_HOST'), // Lấy giá trị từ biến môi trường DB_HOST
+        host: configService.get<string>('DB_HOST'),
         port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
@@ -40,6 +41,7 @@ import { Amenity } from './amenities/amenity.entity';
         synchronize: true,
       }),
     }),
+    CustomerModule,
   ],
 })
 export class AppModule {}

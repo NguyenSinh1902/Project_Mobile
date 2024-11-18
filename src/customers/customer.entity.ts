@@ -11,9 +11,6 @@ export class Customer {
   name: string;
 
   @Column()
-  email: string;
-
-  @Column()
   phone_number: string;
 
   @Column()

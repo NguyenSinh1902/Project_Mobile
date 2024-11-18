@@ -15,23 +15,24 @@ export class CustomerService {
 
   async createCustomer(
     name: string,
-    email: string,
     phone_number: string,
     password: string,
   ): Promise<Customer> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const customer = this.customerRepository.create({
       name,
-      email,
       phone_number,
       password: hashedPassword,
     });
     return await this.customerRepository.save(customer);
   }
 
-  async validatePassword(email: string, password: string): Promise<boolean> {
+  async validatePassword(
+    phone_number: string,
+    password: string,
+  ): Promise<boolean> {
     const customer = await this.customerRepository.findOne({
-      where: { email },
+      where: { phone_number },
     });
     if (!customer) {
       return false;
@@ -47,9 +48,9 @@ export class CustomerService {
   }
 
   // Tìm khách hàng theo email để lấy thông tin khi login
-  async findByEmail(email: string): Promise<Customer> {
+  async findByPhone(phone_number: string): Promise<Customer> {
     return await this.customerRepository.findOne({
-      where: { email },
+      where: { phone_number },
     });
   }
 }
