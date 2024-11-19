@@ -4,7 +4,7 @@ import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
 import { Customer } from './customer.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule và ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [

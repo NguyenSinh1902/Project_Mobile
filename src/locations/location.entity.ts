@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { LocationType } from '../location-types/location-type.entity';
 import { Accommodation } from '../accommodations/accommodation.entity';
 import { Promotion } from '../promotions/promotion.entity';
 
@@ -10,8 +18,9 @@ export class Location {
   @Column()
   name: string;
 
-  @Column({ type: 'enum', enum: ['beach', 'mountain', 'island', 'camping'] })
-  type: string;
+  @ManyToOne(() => LocationType)
+  @JoinColumn({ name: 'location_type_id' })
+  location_type: LocationType;
 
   @OneToMany(() => Accommodation, (accommodation) => accommodation.location)
   accommodations: Accommodation[];

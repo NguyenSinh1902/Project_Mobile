@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Location } from './locations/location.entity';
+import { LocationType } from './location-types/location-type.entity';
 import { Accommodation } from './accommodations/accommodation.entity';
 import { Promotion } from './promotions/promotion.entity';
 import { AccommodationPromotion } from './accommodations/accommodation-promotions.entity';
@@ -12,6 +13,7 @@ import { Customer } from './customers/customer.entity';
 import { Amenity } from './amenities/amenity.entity';
 
 import { CustomerModule } from './customers/customer.module';
+import { AccommodationModule } from './accommodations/accommodation.module'
 
 @Module({
   imports: [
@@ -37,11 +39,13 @@ import { CustomerModule } from './customers/customer.module';
           Booking,
           Customer,
           Amenity,
+          LocationType,
         ],
         synchronize: true,
       }),
     }),
     CustomerModule,
+    AccommodationModule,
   ],
 })
 export class AppModule {}

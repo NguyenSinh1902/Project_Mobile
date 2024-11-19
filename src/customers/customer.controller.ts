@@ -35,26 +35,45 @@ export class CustomerController {
   @Post('login')
   async login(@Body() loginCustomerDto: LoginCustomerDto) {
     const { phone_number, password } = loginCustomerDto;
+
     try {
+      // Kiểm tra tài khoản có tồn tại
+      const customer = await this.customerService.findByPhone(phone_number);
+      if (!customer) {
+        throw new HttpException('Account does not exist', HttpStatus.NOT_FOUND);
+      }
+
       // Kiểm tra mật khẩu
-      const isValid = await this.customerService.validatePassword(
+      const isValidPassword = await this.customerService.validatePassword(
         phone_number,
         password,
       );
-      if (!isValid) {
-        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      if (!isValidPassword) {
+        throw new HttpException('Incorrect password', HttpStatus.UNAUTHORIZED);
       }
 
-      // Lấy thông tin khách hàng từ số điện thoại
-      const customer = await this.customerService.findByPhone(phone_number);
-
-      // Tạo JWT token cho khách hàng
+      // Tạo JWT token
       const token = await this.customerService.generateJwtToken(customer);
 
-      return { message: 'Login successful', token };
-    } catch {
+      // Trả về kết quả
+      return {
+        message: 'Login successful',
+        token,
+        customer: {
+          name: customer.name,
+          phone_number: customer.phone_number,
+        },
+      };
+    } catch (error) {
+      // Log lỗi chi tiết để hỗ trợ debug
+      console.error('Login error:', error.message);
+
+      // Trả về lỗi chung nếu không xác định được nguyên nhân
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
-        'Login failed, please try again later.',
+        'Login failed. Please try again later.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

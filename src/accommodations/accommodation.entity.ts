@@ -39,6 +39,9 @@ export class Accommodation {
   @Column('text')
   description: string;
 
+  @Column('text')
+  address: string;
+
   @Column()
   image_url: string;
 
