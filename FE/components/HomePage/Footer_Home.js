@@ -1,17 +1,46 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 const Footer_Home = () => {
+  const navigation = useNavigation();
+
+  const handleHomePress = () => {
+    navigation.navigate('HomePage');
+  };
+
   return (
     <View style={styles.footer}>
-      {/* <Text>Footer</Text> */}
+      <TouchableOpacity onPress={handleHomePress}>
+        <Image source={require("../../assets/typcn_home-outline.png")} style={styles.icon} />
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Image source={require("../../assets/mdi_heart-outline.png")} style={styles.icon} />
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Image source={require("../../assets/mingcute_notification-line.png")} style={styles.icon} />
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Image source={require("../../assets/codicon_account.png")} style={styles.icon} />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   footer: {
-    // Add footer styles here
+    width: "100%",
+    height: 60,
+    backgroundColor: "#F0F9FF",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 0,
+  },
+  icon: {
+    width: 32,
+    height: 32,
   },
 });
 

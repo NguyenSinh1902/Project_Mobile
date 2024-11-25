@@ -7,6 +7,7 @@ import GetStarted from './components/GetStarted';
 import Register from './components/Register';
 import Login from './components/Login';
 import HomePage from './components/HomePage/HomePage'; // Import HomePage component
+import Categories_Home from './components/HomePage/Categories_Home'; // Import Categories_Home component
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,11 @@ const App = () => {
         <Stack.Screen 
           name="HomePage" 
           component={HomePage} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Categories_Home" 
+          component={Categories_Home} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>

@@ -49,9 +49,10 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 1,
   },
   headerImage: {
-    width: 440,
+    width: "110%",
     height: 230,
     flexShrink: 0,
     borderRadius: 50,
