@@ -31,6 +31,10 @@ const Categories_Home = () => {
     setSelectedCategory(category);
   };
 
+  const handleHotelPress = (hotel) => {
+    navigation.navigate('Detail_Hotel', { hotel });
+  };
+
   const getCategoryBoxStyle = (category) => {
     return {
       ...styles.categoryBox,
@@ -110,69 +114,71 @@ const Categories_Home = () => {
               style={styles.specialOffersGrid}
             >
               {filteredHotels.map((hotel) => (
-                <View key={hotel.id} style={styles.hotelContainer}>
-                  <Image
-                    source={{ uri: hotel.image_avatar }}
-                    style={styles.hotelImage}
-                  />
-                  <View style={styles.buttonWrapper}>
-                    <BlurView
-                      tint="dark"
-                      intensity={50}
-                      style={styles.blurButton}
-                    >
-                      <TouchableOpacity style={styles.circularButton}>
-                        <Image
-                          source={require("../../assets/iconoir_heart.png")}
-                          style={styles.buttonIcon}
-                        />
-                      </TouchableOpacity>
-                    </BlurView>
-                  </View>
-                  <View style={styles.blurWrapper}>
-                    <BlurView
-                      style={styles.blurView}
-                      tint="dark"
-                      intensity={100}
-                    >
-                      <Text style={styles.hotelName}>{hotel.name}</Text>
-                      <View style={{ flexDirection: "row" }}>
-                        <Image
-                          source={require("../../assets/bx_map.png")}
-                          style={{marginTop: 3}}
-                        />
-                        <Text style={styles.hotelLocation}>
-                          {hotel.location}
-                        </Text>
-                      </View>
-
-                      <View style={styles.hotelInfoRow}>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text
-                            style={{
-                              color: "#FFF",
-                              marginTop: 3,
-                              marginLeft: 3,
-                              fontSize: 16,
-                            }}
-                          >
-                            Price:
-                          </Text>
-                          <Text style={styles.hotelPrice}>
-                            ${hotel.price}
-                          </Text>
-                        </View>
+                <TouchableOpacity key={hotel.id} onPress={() => handleHotelPress(hotel)}>
+                  <View style={styles.hotelContainer}>
+                    <Image
+                      source={{ uri: hotel.image_avatar }}
+                      style={styles.hotelImage}
+                    />
+                    <View style={styles.buttonWrapper}>
+                      <BlurView
+                        tint="dark"
+                        intensity={50}
+                        style={styles.blurButton}
+                      >
+                        <TouchableOpacity style={styles.circularButton}>
+                          <Image
+                            source={require("../../assets/iconoir_heart.png")}
+                            style={styles.buttonIcon}
+                          />
+                        </TouchableOpacity>
+                      </BlurView>
+                    </View>
+                    <View style={styles.blurWrapper}>
+                      <BlurView
+                        style={styles.blurView}
+                        tint="dark"
+                        intensity={100}
+                      >
+                        <Text style={styles.hotelName}>{hotel.name}</Text>
                         <View style={{ flexDirection: "row" }}>
                           <Image
-                            source={require("../../assets/eva_star-fill.png")}
-                            style={{ width: 20, height: 20 }}
+                            source={require("../../assets/bx_map.png")}
+                            style={{marginTop: 3}}
                           />
-                          <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                          <Text style={styles.hotelLocation}>
+                            {hotel.location}
+                          </Text>
                         </View>
-                      </View>
-                    </BlurView>
+
+                        <View style={styles.hotelInfoRow}>
+                          <View style={{ flexDirection: "row" }}>
+                            <Text
+                              style={{
+                                color: "#FFF",
+                                marginTop: 3,
+                                marginLeft: 3,
+                                fontSize: 16,
+                              }}
+                            >
+                              Price:
+                            </Text>
+                            <Text style={styles.hotelPrice}>
+                              ${hotel.price}
+                            </Text>
+                          </View>
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              source={require("../../assets/eva_star-fill.png")}
+                              style={{ width: 20, height: 20 }}
+                            />
+                            <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                          </View>
+                        </View>
+                      </BlurView>
+                    </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>

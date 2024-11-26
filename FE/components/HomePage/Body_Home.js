@@ -24,6 +24,10 @@ const Body_Home = ({ formatTime, timeLeft }) => {
     navigation.navigate('Categories_Home');
   };
 
+  const handleHotelPress = (hotel) => {
+    navigation.navigate('Detail_Hotel', { hotel });
+  };
+
   return (
     <View style={{ marginBottom: 70 }}>
       <ScrollView vertical showsHorizontalScrollIndicator={false}>
@@ -95,51 +99,53 @@ const Body_Home = ({ formatTime, timeLeft }) => {
             style={styles.specialOffersGrid}
           >
             {hotels.map((hotel) => (
-              <View key={hotel.id} style={styles.hotelContainer}>
-                <Image
-                  source={{ uri: hotel.image_avatar }}
-                  style={styles.hotelImage}
-                />
-                <View style={styles.buttonWrapper}>
-                  <BlurView
-                    tint="dark"
-                    intensity={50}
-                    style={styles.blurButton}
-                  >
-                    <TouchableOpacity style={styles.circularButton}>
-                      <Image
-                        source={require("../../assets/iconoir_heart.png")}
-                        style={styles.buttonIcon}
-                      />
-                    </TouchableOpacity>
-                  </BlurView>
-                </View>
-                <View style={styles.blurWrapper}>
-                  <BlurView style={styles.blurView} tint="dark" intensity={100}>
-                    <Text style={styles.hotelName}>{hotel.name}</Text>
-                    <View style={{ flexDirection: "row" }}>
-                      <Image
-                        source={require("../../assets/bx_map.png")}
-                        style={styles.locationIcon}
-                      />
-                      <Text style={styles.hotelLocation}>{hotel.location}</Text>
-                    </View>
-
-                    <View style={styles.hotelInfoRow}>
-                      <Text style={styles.hotelPrice}>
-                        ${hotel.price}/Night
-                      </Text>
+              <TouchableOpacity key={hotel.id} onPress={() => handleHotelPress(hotel)}>
+                <View style={styles.hotelContainer}>
+                  <Image
+                    source={{ uri: hotel.image_avatar }}
+                    style={styles.hotelImage}
+                  />
+                  <View style={styles.buttonWrapper}>
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={styles.blurButton}
+                    >
+                      <TouchableOpacity style={styles.circularButton}>
+                        <Image
+                          source={require("../../assets/iconoir_heart.png")}
+                          style={styles.buttonIcon}
+                        />
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
+                  <View style={styles.blurWrapper}>
+                    <BlurView style={styles.blurView} tint="dark" intensity={100}>
+                      <Text style={styles.hotelName}>{hotel.name}</Text>
                       <View style={{ flexDirection: "row" }}>
                         <Image
-                          source={require("../../assets/eva_star-fill.png")}
-                          style={{ width: 20, height: 20 }}
+                          source={require("../../assets/bx_map.png")}
+                          style={styles.locationIcon}
                         />
-                        <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                        <Text style={styles.hotelLocation}>{hotel.location}</Text>
                       </View>
-                    </View>
-                  </BlurView>
+
+                      <View style={styles.hotelInfoRow}>
+                        <Text style={styles.hotelPrice}>
+                          ${hotel.price}/Night
+                        </Text>
+                        <View style={{ flexDirection: "row" }}>
+                          <Image
+                            source={require("../../assets/eva_star-fill.png")}
+                            style={{ width: 20, height: 20 }}
+                          />
+                          <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                        </View>
+                      </View>
+                    </BlurView>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -160,60 +166,62 @@ const Body_Home = ({ formatTime, timeLeft }) => {
             style={styles.specialOffersGrid}
           >
             {hotels.map((hotel) => (
-              <View key={hotel.id} style={styles.hotelContainer}>
-                <Image
-                  source={{ uri: hotel.image_avatar }}
-                  style={styles.hotelImage}
-                />
-                <View style={styles.buttonWrapper}>
-                  <BlurView
-                    tint="dark"
-                    intensity={50}
-                    style={styles.blurButton}
-                  >
-                    <TouchableOpacity style={styles.circularButton}>
-                      <Image
-                        source={require("../../assets/iconoir_heart.png")}
-                        style={styles.buttonIcon}
-                      />
-                    </TouchableOpacity>
-                  </BlurView>
-                </View>
-                <View style={styles.blurWrapper}>
-                  <BlurView style={styles.blurView} tint="dark" intensity={100}>
-                    <Text style={styles.hotelName}>{hotel.name}</Text>
-                    <View style={{ flexDirection: "row" }}>
-                      <Image
-                        source={require("../../assets/bx_map.png")}
-                        style={styles.locationIcon}
-                      />
-                      <Text style={styles.hotelLocation}>{hotel.location}</Text>
-                    </View>
-
-                    <View style={styles.hotelInfoRow}>
-                      <View style={styles.priceContainer}>
-                        <View style={styles.originalPriceContainer}>
-                          <Text style={styles.originalPrice}>
-                            ${hotel.price}
-                          </Text>
-                        </View>
-                        <View style={styles.discountedPriceContainer}>
-                          <Text style={styles.discountedPrice}>
-                            ${hotel.price * 0.8}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={{ flexDirection: "row", marginTop: 5 }}>
+              <TouchableOpacity key={hotel.id} onPress={() => handleHotelPress(hotel)}>
+                <View style={styles.hotelContainer}>
+                  <Image
+                    source={{ uri: hotel.image_avatar }}
+                    style={styles.hotelImage}
+                  />
+                  <View style={styles.buttonWrapper}>
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={styles.blurButton}
+                    >
+                      <TouchableOpacity style={styles.circularButton}>
                         <Image
-                          source={require("../../assets/eva_star-fill.png")}
-                          style={{ width: 20, height: 20 }}
+                          source={require("../../assets/iconoir_heart.png")}
+                          style={styles.buttonIcon}
                         />
-                        <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
+                  <View style={styles.blurWrapper}>
+                    <BlurView style={styles.blurView} tint="dark" intensity={100}>
+                      <Text style={styles.hotelName}>{hotel.name}</Text>
+                      <View style={{ flexDirection: "row" }}>
+                        <Image
+                          source={require("../../assets/bx_map.png")}
+                          style={styles.locationIcon}
+                        />
+                        <Text style={styles.hotelLocation}>{hotel.location}</Text>
                       </View>
-                    </View>
-                  </BlurView>
+
+                      <View style={styles.hotelInfoRow}>
+                        <View style={styles.priceContainer}>
+                          <View style={styles.originalPriceContainer}>
+                            <Text style={styles.originalPrice}>
+                              ${hotel.price}
+                            </Text>
+                          </View>
+                          <View style={styles.discountedPriceContainer}>
+                            <Text style={styles.discountedPrice}>
+                              ${hotel.price * 0.8}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={{ flexDirection: "row", marginTop: 5 }}>
+                          <Image
+                            source={require("../../assets/eva_star-fill.png")}
+                            style={{ width: 20, height: 20 }}
+                          />
+                          <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                        </View>
+                      </View>
+                    </BlurView>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -231,62 +239,64 @@ const Body_Home = ({ formatTime, timeLeft }) => {
             style={styles.specialOffersGrid}
           >
             {hotels.map((hotel, index) => (
-              <View key={hotel.id} style={styles.hotelContainer}>
-                <Image
-                  source={{ uri: hotel.image_avatar }}
-                  style={styles.hotelImage}
-                />
-                <View style={styles.buttonWrapper}>
-                  <BlurView
-                    tint="dark"
-                    intensity={50}
-                    style={styles.blurButton}
-                  >
-                    <TouchableOpacity style={styles.circularButton}>
-                      <Image
-                        source={require("../../assets/iconoir_heart.png")}
-                        style={styles.buttonIcon}
-                      />
-                    </TouchableOpacity>
-                  </BlurView>
-                </View>
-                <View style={[styles.blurWrapper, { height: 110 }]}>
-                  <BlurView style={styles.blurView} tint="dark" intensity={100}>
-                    <Text style={styles.hotelName}>{hotel.name}</Text>
-                    <View style={{ flexDirection: "row" }}>
-                      <Image
-                        source={require("../../assets/bx_map.png")}
-                        style={styles.locationIcon}
-                      />
-                      <Text style={styles.hotelLocation}>{hotel.location}</Text>
-                    </View>
-
-                    <View style={{ flexDirection: "row", marginLeft: 3 }}>
-                      <Image
-                        source={require("../../assets/solar_map-linear.png")}
-                        style={styles.locationIcon}
-                      />
-                      <Text style={styles.hotelLocation}>Away from you: </Text>
-                      <Text style={styles.hotelLocation}>
-                        {(index * 0.2).toFixed(1)} km
-                      </Text>
-                    </View>
-
-                    <View style={styles.hotelInfoRow}>
-                      <Text style={styles.hotelPrice}>
-                        ${hotel.price}/Night
-                      </Text>
+              <TouchableOpacity key={hotel.id} onPress={() => handleHotelPress(hotel)}>
+                <View style={styles.hotelContainer}>
+                  <Image
+                    source={{ uri: hotel.image_avatar }}
+                    style={styles.hotelImage}
+                  />
+                  <View style={styles.buttonWrapper}>
+                    <BlurView
+                      tint="dark"
+                      intensity={50}
+                      style={styles.blurButton}
+                    >
+                      <TouchableOpacity style={styles.circularButton}>
+                        <Image
+                          source={require("../../assets/iconoir_heart.png")}
+                          style={styles.buttonIcon}
+                        />
+                      </TouchableOpacity>
+                    </BlurView>
+                  </View>
+                  <View style={[styles.blurWrapper, { height: 110 }]}>
+                    <BlurView style={styles.blurView} tint="dark" intensity={100}>
+                      <Text style={styles.hotelName}>{hotel.name}</Text>
                       <View style={{ flexDirection: "row" }}>
                         <Image
-                          source={require("../../assets/eva_star-fill.png")}
-                          style={{ width: 20, height: 20 }}
+                          source={require("../../assets/bx_map.png")}
+                          style={styles.locationIcon}
                         />
-                        <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                        <Text style={styles.hotelLocation}>{hotel.location}</Text>
                       </View>
-                    </View>
-                  </BlurView>
+
+                      <View style={{ flexDirection: "row", marginLeft: 3 }}>
+                        <Image
+                          source={require("../../assets/solar_map-linear.png")}
+                          style={styles.locationIcon}
+                        />
+                        <Text style={styles.hotelLocation}>Away from you: </Text>
+                        <Text style={styles.hotelLocation}>
+                          {(index * 0.2).toFixed(1)} km
+                        </Text>
+                      </View>
+
+                      <View style={styles.hotelInfoRow}>
+                        <Text style={styles.hotelPrice}>
+                          ${hotel.price}/Night
+                        </Text>
+                        <View style={{ flexDirection: "row" }}>
+                          <Image
+                            source={require("../../assets/eva_star-fill.png")}
+                            style={{ width: 20, height: 20 }}
+                          />
+                          <Text style={styles.hotelRating}>{hotel.rating}</Text>
+                        </View>
+                      </View>
+                    </BlurView>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
