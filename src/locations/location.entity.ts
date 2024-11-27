@@ -18,6 +18,9 @@ export class Location {
   @Column()
   name: string;
 
+  @Column()
+  image_url: string;
+
   @ManyToOne(() => LocationType)
   @JoinColumn({ name: 'location_type_id' })
   location_type: LocationType;

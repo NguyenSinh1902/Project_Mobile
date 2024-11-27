@@ -9,6 +9,9 @@ export class LocationType {
   @Column({ unique: true })
   type: string; // 'beach', 'mountain', 'island', 'camping'
 
+  @Column()
+  image_url: string;
+
   @OneToMany(() => Location, (location) => location.location_type)
   locations: Location[];
 }

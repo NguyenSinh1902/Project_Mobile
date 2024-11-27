@@ -13,7 +13,9 @@ import { Customer } from './customers/customer.entity';
 import { Amenity } from './amenities/amenity.entity';
 
 import { CustomerModule } from './customers/customer.module';
-import { AccommodationModule } from './accommodations/accommodation.module'
+import { AccommodationModule } from './accommodations/accommodation.module';
+import { LocationTypeModule } from './location-types/location-type.module';
+import { LocationModule } from './locations/location.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { AccommodationModule } from './accommodations/accommodation.module'
     }),
     CustomerModule,
     AccommodationModule,
+    LocationTypeModule,
+    LocationModule,
   ],
 })
 export class AppModule {}
