@@ -9,9 +9,12 @@ import {
   FlatList,
 } from "react-native";
 import { BlurView } from "expo-blur";
+import { useNavigation } from "@react-navigation/native";
+
 const Detail_Hotel = ({ route }) => {
   const { hotel } = route.params;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigation = useNavigation();
 
   const handleScroll = (event) => {
     const index = Math.floor(
@@ -41,11 +44,11 @@ const Detail_Hotel = ({ route }) => {
           />
           <View style={styles.buttonWrapperLeft}>
             <BlurView tint="dark" intensity={50} style={styles.blurButton}>
-              <TouchableOpacity style={styles.circularButton}>
-                <Image
-                  source={require("../assets/weui_back-filled.png")}
-                  
-                />
+              <TouchableOpacity
+                style={styles.circularButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Image source={require("../assets/weui_back-filled.png")} />
               </TouchableOpacity>
             </BlurView>
           </View>
@@ -383,7 +386,10 @@ const Detail_Hotel = ({ route }) => {
 
             <Text style={styles.nowPrice}>Now: ${hotel.price * 0.9}</Text>
           </View>
-          <TouchableOpacity style={styles.bookButton}>
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() => navigation.navigate("Book_Hotel", { hotel })}
+          >
             <Text style={styles.bookButtonText}>Book Now</Text>
           </TouchableOpacity>
         </View>
