@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
 const PaymentSuccessful = () => {
+    const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -40,7 +41,7 @@ const PaymentSuccessful = () => {
               marginTop: 40,
             }}
           >
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HomePage')}>
               <Image source={require("../assets/home-button.png")} />
               <Text style={styles.buttonText}>Back to Home</Text>
             </TouchableOpacity>
