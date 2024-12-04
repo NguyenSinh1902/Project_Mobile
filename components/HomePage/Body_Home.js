@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { getAllLocationTypes } from "../../services/LocationTypeService.js"; 
 import { getAllLocations } from "../../services/LocationService.js";
+import { findCustomerByPhone } from "../../services/CustomerService.js";
 import { useNavigation } from '@react-navigation/native';
 
 import HotelList from "./Body_Child/HotelList.js";
@@ -21,6 +22,23 @@ const Body_Home = ({ customer }) => {
   const [locationTypes, setLocationTypes] = useState([]);
   const [locations, setLocations] = useState([]);
   const navigation = useNavigation();
+  const [customerApi, setCustomer] = useState(null);
+
+  useEffect(() => {
+    if (customer && customer.phone_number) {
+      const fetchCustomer = async () => {
+        try {
+          const foundCustomer = await findCustomerByPhone(customer.phone_number);
+          setCustomer(foundCustomer); 
+        } catch (error) {
+          setCustomer(null); 
+          console.error("Customer not found or error occurred", error);
+        }
+      };
+  
+      fetchCustomer();
+    }
+  }, [customer?.phone_number]);
 
   useEffect(() => {
     const fetchLocationTypes = async () => {
@@ -49,7 +67,7 @@ const Body_Home = ({ customer }) => {
   }, []);
 
   const handleLocationTypePress = async (locationType) => {
-    navigation.navigate('CategoryDetail', { locationType: locationType, customer: customer });
+    navigation.navigate('CategoryDetail', { locationType: locationType, customer: customerApi });
   };
 
   return (
@@ -105,10 +123,10 @@ const Body_Home = ({ customer }) => {
       </View>
 
       {/* Các loại chỗ nghỉ */}
-      <HotelList/>
-      <CampingList/>
-      <ResortList/>
-      <HomestayList/>
+      <HotelList customer={customerApi}/>
+      <CampingList customer={customerApi}/>
+      <ResortList customer={customerApi}/>
+      <HomestayList customer={customerApi}/>
 
       {/* Các địa điểm có khuyến mãi */}
       <View style={[styles.categoriesContainer, { marginTop: 20 }]}>

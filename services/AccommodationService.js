@@ -62,3 +62,18 @@ export const getAccommodationsByCamping = async () => {
   });
   return response.data;
 };
+
+/**
+ * Lấy thông tin chi tiết của một accommodation theo ID.
+ * @param {number} id - ID của accommodation.
+ * @returns {Promise<Object>} - Chi tiết của accommodation.
+ */
+export const getAccommodationById = async (id) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching accommodation with id ${id}:`, error);
+    throw error;
+  }
+};

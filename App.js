@@ -7,6 +7,9 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import HomePage from "./components/HomePage/HomePage";
 import Category_Detail from "./components/Category_Detail";
+import MyFavorite from "./components/MyFavorite";
+import Account from "./components/Account ";
+import AccommodationDetail from "./components/Accomodation_Detail";
 
 const Stack = createStackNavigator();
 
@@ -37,6 +40,21 @@ const App = () => {
         <Stack.Screen
           name="CategoryDetail"
           component={Category_Detail}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyFavorite"
+          component={MyFavorite}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Account"
+          component={Account}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AccommodationDetail"
+          component={AccommodationDetail}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

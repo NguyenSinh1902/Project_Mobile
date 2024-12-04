@@ -7,23 +7,27 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-import { getAllLocationTypes } from "../services/LocationTypeService.js"; 
-import { getAllLocations } from "../services/LocationService.js";
+import { getAllLocationTypes } from "../services/LocationTypeService.js";
 import { getAccommodationsByLocationType } from "../services/AccommodationService.js";
+import { addFavorite, removeFavorite, getFavorites } from "../services/FavoriteService.js";
 
+import Icon from 'react-native-vector-icons/FontAwesome';;
 import Header_Home from "./HomePage/Header_Home";
 import Footer_Home from "./HomePage/Footer_Home.js";
 
 const Category_Detail = () => {
 
   const route = useRoute();
+  const navigation = useNavigation();
+
   const { customer } = route.params;
 
   const [locationTypes, setLocationTypes] = useState([]);
   const [selectedAccommodations, setSelectedAccommodations] = useState([]);
   const [selectedLocationType, setSelectedLocationType] = useState(route.params?.locationType || null);
+  const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
     const fetchLocationTypes = async () => {
@@ -51,6 +55,48 @@ const Category_Detail = () => {
       fetchAccommodations();
     }
   }, [selectedLocationType]);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        if (customer) {
+          const favoriteData = await getFavorites(customer.customer_id); // Fetch favorites for the customer
+          setFavorites(favoriteData);
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
+
+    fetchFavorites();
+  }, [customer]);
+
+  const handleFavoriteToggle = async (accommodationId) => {
+    try {
+      if (!customer) {
+        console.error("Customer not provided");
+        return;
+      }
+
+      if (favorites.some(favorite => favorite.accommodation && favorite.accommodation.accommodation_id === accommodationId)) {
+        // Remove from favorites
+        await removeFavorite(customer.customer_id, accommodationId);
+        setFavorites(prevFavorites => prevFavorites.filter(favorite => 
+          favorite.accommodation.accommodation_id !== accommodationId
+        ));
+      } else {
+        // Add to favorites
+        await addFavorite(customer.customer_id, accommodationId);
+        setFavorites(prevFavorites => [...prevFavorites, { accommodation: { accommodation_id: accommodationId } }]);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
+
+  const isFavorite = (accommodationId) => {
+    return favorites.some(favorite => favorite.accommodation.accommodation_id === accommodationId);
+  };
 
   const handleLocationTypePress = async (locationType) => {
     try {
@@ -103,11 +149,26 @@ const Category_Detail = () => {
           </View>
           <ScrollView style={styles.accommodationsList} showsVerticalScrollIndicator={false}>
             {selectedAccommodations.map((acc) => (
-              <TouchableOpacity key={acc.id} style={styles.accommodationItem}>
+              <TouchableOpacity key={acc.accommodation_id} 
+                style={styles.accommodationItem}
+                onPress={() =>
+                  navigation.navigate('AccommodationDetail', { accommodationId: acc.accommodation_id, customer })
+                }
+              >
                 <Image
                   source={{ uri: acc.image_url }}
                   style={styles.accommodationImage}
                 />
+                <TouchableOpacity
+                  style={styles.favoriteIcon}
+                  onPress={() => handleFavoriteToggle(acc.accommodation_id)}
+                >
+                  <Icon
+                    name={isFavorite(acc.accommodation_id) ? "heart" : "heart-o"}
+                    size={24}
+                    color={isFavorite(acc.accommodation_id) ? "red" : "gray"}
+                  />
+                </TouchableOpacity>
                 <Text style={styles.accommodationName}>{acc.name}</Text>
                 <Text style={styles.accommodationPrice}>
                   {formatPrice(acc.price_per_night)}<Text>/night</Text>
@@ -115,6 +176,7 @@ const Category_Detail = () => {
                 <Text style={styles.accommodationAddress}>
                   {acc.address}
                 </Text>
+                
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -231,6 +293,14 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  favoriteIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 60,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: 15,
+    padding: 5,
   },
 });
 
