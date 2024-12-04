@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.1.11:3000/customers";
+const API_BASE_URL = "http://192.168.1.82:3000/customers";
 
 export const registerCustomer = async (data) => {
   const response = await axios.post(`${API_BASE_URL}/register`, data);

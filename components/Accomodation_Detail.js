@@ -1,102 +1,620 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
-import { getAccommodationById } from '../services/AccommodationService'; 
-
-import Footer_Home from "./HomePage/Footer_Home.js";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import { BlurView } from "expo-blur";
+import { useNavigation } from "@react-navigation/native";
+import { getAccommodationById } from "../services/AccommodationService";
 
 const AccommodationDetail = ({ route }) => {
+  const { accommodationId, customer } = route.params;
+  const [accommodation, setAccommodation] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const navigation = useNavigation();
 
-    const { accommodationId, customer } = route.params; 
-    const [accommodation, setAccommodation] = useState(null);
+  useEffect(() => {
+    const fetchAccommodationDetails = async () => {
+      try {
+        const data = await getAccommodationById(accommodationId);
+        setAccommodation(data);
+      } catch (error) {
+        console.error("Error fetching accommodation details:", error);
+      }
+    };
 
-    useEffect(() => {
-        const fetchAccommodationDetails = async () => {
-        try {
-            const data = await getAccommodationById(accommodationId); 
-            setAccommodation(data);
-        } catch (error) {
-            console.error('Error fetching accommodation details:', error);
-        }
-        };
+    fetchAccommodationDetails();
+  }, [accommodationId]);
 
-        fetchAccommodationDetails();
-    }, [accommodationId]);
-
-    if (!accommodation) {
-        return (
-        <View style={styles.center}>
-            <Text>Loading...</Text>
-        </View>
-        );
-    }
-    console.log(accommodation);
-    const formatPrice = (price) => {
-        return Number(price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'VND');
-      };
-
+  if (!accommodation) {
     return (
-        <>
-            <View style={styles.container}>
-                {/* Hình ảnh */}
-                <Image source={{ uri: accommodation.image_url }} style={styles.image} />
-                <Text style={styles.title}>{accommodation.name}</Text>
-                <Text style={styles.address}>{accommodation.address}</Text>
-                <Text style={styles.type}>Type: {accommodation.type}</Text>
-                <Text style={styles.rating}>Rating: {accommodation.rating}⭐</Text>
-                <Text style={styles.price}>Price per Night: {formatPrice(accommodation.price_per_night)}</Text>
-                <Text style={styles.maxGuests}>Max Guests: {accommodation.max_guests}</Text>
-
-                {/* Mô tả */}
-                <Text style={styles.sectionTitle}>Description</Text>
-                <Text style={styles.description}>{accommodation.description}</Text>
-
-                {/* Tiện nghi */}
-                <Text style={styles.sectionTitle}>Amenities</Text>
-                {accommodation.amenities.map((amenity) => (
-                    <Text key={amenity.amenity_id} style={styles.amenity}>- {amenity.name}</Text>
-                ))}
-
-                {/* Khuyến mãi */}
-                {accommodation.promotions && accommodation.promotions.length > 0 && (
-                    <>
-                    <Text style={styles.sectionTitle}>Promotions</Text>
-                    {accommodation.promotions.map((promo) => (
-                        <View key={promo.promotion_id} style={styles.promotion}>
-                        <Text style={styles.promoName}>{promo.name}</Text>
-                        <Text>Discount: {promo.discount_percentage}%</Text>
-                        <Text>
-                            Valid from {promo.start_date} to {promo.end_date}
-                        </Text>
-                        </View>
-                    ))}
-                    </>
-                )}
-            </View>
-            <Footer_Home customer={customer}/>
-        </>
+      <View style={styles.center}>
+        <Text>Loading...</Text>
+      </View>
     );
+  }
+  console.log(accommodation);
+  const formatPrice = (price) => {
+    return Number(price)
+      .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      .replace("₫", "VND");
+  };
+
+  const handleScroll = (event) => {
+    const index = Math.floor(
+      event.nativeEvent.contentOffset.x /
+        event.nativeEvent.layoutMeasurement.width
+    );
+    setCurrentIndex(index);
+  };
+
+  const hotel = {
+    comments: {
+      "Phuong Thao": "Absolutely loved the panoramic mountain views!",
+      "Manh Hung": "The staff was very attentive and friendly.",
+      "Nguyen An": "The room was clean and comfortable.",
+      "Tran Binh": "Great location, close to many attractions.",
+      "Le Minh": "Breakfast was delicious with a variety of options.",
+    },
+  };
+
+  return (
+    <>
+      <ScrollView
+        style={styles.container}
+        showsHorizontalScrollIndicator={false}
+      >
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: accommodation.image_url }}
+            style={styles.hotelImage}
+          />
+          <View style={styles.buttonWrapperLeft}>
+            <BlurView tint="dark" intensity={50} style={styles.blurButton}>
+              <TouchableOpacity
+                style={styles.circularButton}
+                onPress={() => navigation.goBack()}
+              >
+                <Image source={require("../assets/weui_back-filled.png")} />
+              </TouchableOpacity>
+            </BlurView>
+          </View>
+          <View style={styles.buttonWrapperRight}>
+            <BlurView tint="dark" intensity={50} style={styles.blurButton}>
+              <TouchableOpacity style={styles.circularButton}>
+                <Image
+                  source={require("../assets/iconoir_heart.png")}
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+            </BlurView>
+          </View>
+        </View>
+
+        <View style={styles.infoContainer}>
+          <Text style={styles.hotelName}>{accommodation.name}</Text>
+          <View style={styles.locationContainer}>
+            <View style={{ flexDirection: "row" }}>
+              <Image
+                source={require("../assets/bx_map.png")}
+                style={styles.locationIcon}
+              />
+              <Text style={styles.hotelLocation}>{accommodation.address}</Text>
+            </View>
+
+            <TouchableOpacity>
+              <View style={{ flexDirection: "row", marginRight: 10 }}>
+                <Text style={{ color: "#F86D0A" }}>View map</Text>
+                <Image source={require("../assets/weui_arrow-filled.png")} />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.ratingContainer}>
+            <Image
+              source={require("../assets/eva_star-fill.png")}
+              style={styles.ratingIcon}
+            />
+            <Text style={styles.hotelRating}>{accommodation.rating}</Text>
+            <Text style={{ color: "#666" }}>(86)</Text>
+          </View>
+        </View>
+
+        <View style={styles.horizontalLine} />
+
+        <View
+          style={{
+            flexDirection: "row",
+            marginLeft: 10,
+            marginTop: 5,
+            marginBottom: 5,
+          }}
+        >
+          <Image source={require("../assets/tdesign_discount.png")} />
+          <Text style={styles.hotelVoucher}>50% off, maximum 30k</Text>
+        </View>
+
+        <View style={styles.horizontalLine} />
+
+        <View style={styles.containerAmenities}>
+          <Text style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}>
+            Hotel Amenities
+          </Text>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-around" }}
+          >
+            <View style={styles.facilityContainer}>
+              <Image source={require("../assets/pepicons-pop_wifi.png")} />
+              <Text>Free Wi-Fi</Text>
+            </View>
+            <View style={styles.facilityContainer}>
+              <Image
+                source={require("../assets/game-icons_water-bottle.png")}
+              />
+              <Text style={{ textAlign: "center" }}>
+                Complimentary {"\n"}Water
+              </Text>
+            </View>
+            <View style={styles.facilityContainer}>
+              <Image
+                source={require("../assets/material-symbols_chair-outline.png")}
+              />
+              <Text style={{}}>Love Chair</Text>
+            </View>
+            <View style={styles.facilityContainer}>
+              <Image source={require("../assets/mdi_hours-24.png")} />
+              <Text style={{}}>24-Hour Service</Text>
+            </View>
+          </View>
+          <TouchableOpacity>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                marginRight: 10,
+              }}
+            >
+              <Text style={{ color: "#F86D0A" }}>See all</Text>
+              <Image source={require("../assets/weui_arrow-filled.png")} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.horizontalLine} />
+
+        <View style={styles.containerAmenities}>
+          <Text style={{ fontSize: 18, fontWeight: 500 }}>Overview</Text>
+          <Text style={{ fontSize: 16, fontWeight: 500, color: "#666" }}>
+            Welcome to Swiss-Belresort !
+          </Text>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              Located at 007 KDL Hồ Tuyền Lâm, Ward 3, Đà Lạt, Lâm Đồng 061000,
+              Vietnam, Swiss-Belresort offers a luxurious and comfortable haven
+              for travelers around t...
+              <Text
+                style={{ fontSize: 16, fontWeight: "400", color: "#F86D0A" }}
+              >
+                Read more
+              </Text>
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.horizontalLine} />
+
+        <View style={[styles.containerAmenities, { marginBottom: 5 }]}>
+          <Text style={{ fontSize: 18, fontWeight: 500 }}>Reviews</Text>
+          <View style={{ flexDirection: "row", marginTop: 5 }}>
+            <Image source={require("../assets/noto_star.png")} />
+            <Image source={require("../assets/noto_star.png")} />
+            <Image source={require("../assets/noto_star.png")} />
+            <Image source={require("../assets/noto_star.png")} />
+            <Image source={require("../assets/mingcute_star-half-fill.png")} />
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                marginLeft: 5,
+                color: "#F86D0A",
+              }}
+            >
+              {accommodation.rating}
+            </Text>
+            <Text style={{ color: "#666" }}>(86 Reviews)</Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ flexDirection: "row", marginTop: 10 }}>
+              {Object.entries(hotel.comments).map(
+                ([author, comment], index) => (
+                  <View key={index} style={styles.commentBox}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                        }}
+                      >
+                        <Image
+                          source={require("../assets/avatarComment.png")}
+                        />
+                        <View style={{ marginLeft: 5 }}>
+                          <Text style={styles.commentAuthor}>{author}</Text>
+                          <Text style={{ fontSize: 12 }}>20/11/2024</Text>
+                        </View>
+                      </View>
+                      <View style={{ flexDirection: "row", marginTop: 5 }}>
+                        <Image source={require("../assets/noto_star.png")} />
+                        <Image source={require("../assets/noto_star.png")} />
+                        <Image source={require("../assets/noto_star.png")} />
+                        <Image source={require("../assets/noto_star.png")} />
+                        <Image
+                          source={require("../assets/mingcute_star-half-fill.png")}
+                        />
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.commentText,
+                          { flex: 1, flexShrink: 1, marginRight: 10 },
+                        ]}
+                      >
+                        {comment}
+                      </Text>
+
+                      <TouchableOpacity>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Image
+                            source={require("../assets/mdi_like.png")}
+                            style={{ marginRight: 2 }}
+                          />
+                          <Text>15</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )
+              )}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.horizontalLine} />
+
+        <View style={[styles.containerAmenities, { marginRight: 10 }]}>
+          <Text style={{ fontSize: 18, fontWeight: 500 }}>Hotel Policies</Text>
+          <Text style={{ fontSize: 16, fontWeight: 500, color: "#666" }}>
+            Check-In and Check-Out Times
+          </Text>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              Hourly Booking
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              06:00 to 22:00 (on the same day)
+            </Text>
+          </View>
+
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              Overnight Booking
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              22:00 to 12:00 (the next day)
+            </Text>
+          </View>
+
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              Daily Booking
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+              14:00 to 12:00 (the following day)
+            </Text>
+          </View>
+          <View
+            style={{
+              width: "100%",
+              height: 2,
+              backgroundColor: "#E0E0E0",
+              marginBottom: 5,
+              marginTop: 5,
+            }}
+          />
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: 500, color: "#666" }}>
+              Cancellation Policy
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "500", color: "#666" }}>
+              Daily Booking:{" "}
+              <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+                Cancel at least 1 hour before check-in.
+              </Text>
+            </Text>
+
+            <Text style={{ fontSize: 15, fontWeight: "500", color: "#666" }}>
+              Overnight Booking:{" "}
+              <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+                Cancel at least 2 hours before check-in time.
+              </Text>
+            </Text>
+
+            <Text style={{ fontSize: 15, fontWeight: "500", color: "#666" }}>
+              Daily Booking:{" "}
+              <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+                Cancel at least 12 hours before check-in.
+              </Text>
+            </Text>
+
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "500",
+                color: "#666",
+                marginTop: 10,
+                marginBottom: 5,
+              }}
+            >
+              Note:{" "}
+              <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
+                If canceled after the specified time, the full booking amount
+                will be non-refundable.
+              </Text>
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.horizontalLine} />
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <View style={styles.timeContainer}>
+          <Text>
+            {" "}
+            <Image source={require("../assets/mdi_weather-night.png")} /> 01
+            Night | 22:00, 05/12/ - 12:00, 06/12
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={styles.priceContainer}>
+            <Text>
+              {" "}
+              Original Price:
+              <Text style={styles.originalPrice}>
+                {" "}
+                {formatPrice(accommodation.price_per_night)}
+              </Text>
+            </Text>
+
+            <Text style={styles.nowPrice}>
+              Now:{" "}
+              {(accommodation.price_per_night * 0.9).toLocaleString("vi-VN")}{" "}
+              VND
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() =>
+              navigation.navigate("Book_Hotel", {
+                accommodationId: accommodationId,
+                customer: customer,
+              })
+            }
+          >
+            <Text style={styles.bookButtonText}>Book Now</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { padding: 20, backgroundColor: '#fff' },
-    center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    image: { width: '100%', height: 200, borderRadius: 10 },
-    title: { fontSize: 22, fontWeight: 'bold', marginVertical: 10 },
-    address: { fontSize: 16, color: 'gray' },
-    type: { fontSize: 16, marginTop: 5 },
-    rating: { fontSize: 16, marginTop: 5 },
-    price: { fontSize: 18, color: 'green', fontWeight: 'bold', marginVertical: 10 },
-    maxGuests: { fontSize: 16, marginTop: 5 },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 15 },
-    description: { fontSize: 16, lineHeight: 24, marginTop: 10 },
-    amenity: { fontSize: 16, marginTop: 5 },
-    promotion: {
-        backgroundColor: '#f0f8ff',
-        padding: 10,
-        borderRadius: 5,
-        marginTop: 10,
-    },
-    promoName: { fontSize: 16, fontWeight: 'bold' },
+  container: {
+    flex: 1,
+    backgroundColor: "#F2F2F2",
+  },
+  imageContainer: {
+    position: "relative",
+  },
+  hotelImage: {
+    width: 412,
+    height: 371,
+  },
+  imageIndexContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 10,
+    padding: 5,
+  },
+  imageIndexText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  infoContainer: {
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  hotelName: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 5,
+  },
+  locationContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  locationIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    borderRadius: 5,
+    backgroundColor: "#000",
+    marginLeft: 2,
+  },
+  hotelLocation: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#000",
+    marginLeft: 3,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    //marginBottom: 10,
+  },
+  ratingIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 5,
+  },
+  hotelRating: {
+    fontSize: 16,
+    color: "#000",
+    fontWeight: "500",
+  },
+  horizontalLine: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "#E0E0E0",
+    marginBottom: 5,
+    marginTop: 5,
+  },
+  hotelVoucher: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#000",
+    marginLeft: 10,
+  },
+  containerAmenities: {
+    marginTop: 5,
+    marginLeft: 10,
+  },
+  facilityContainer: {
+    alignItems: "center",
+  },
+
+  commentBox: {
+    width: 300,
+    height: 100,
+    borderRadius: 20,
+    border: 0.5,
+    borderColor: "#666",
+    backgroundColor: "#FFF",
+    padding: 10,
+    marginRight: 10,
+  },
+  commentAuthor: {
+    fontWeight: "bold",
+    //marginBottom: 5,
+  },
+  commentText: {
+    color: "#000",
+    fontSize: 15,
+  },
+
+  footer: {
+    width: "100%",
+    height: 135,
+    backgroundColor: "#FFF",
+    padding: 10,
+  },
+  timeContainer: {
+    width: 390,
+    height: 32,
+    borderRadius: 20,
+    backgroundColor: "#EDE7F3",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  priceContainer: {
+    flexDirection: "column",
+    //alignItems: "center",
+    //justifyContent: "space-between",
+  },
+  originalPrice: {
+    textDecorationLine: "line-through",
+    fontSize: 15,
+    fontWeight: "400",
+    color: "#666",
+  },
+  nowPrice: {
+    marginLeft: 3,
+    fontSize: 25,
+    fontWeight: "bold",
+    fontStyle: "italic",
+    color: "#FB773C",
+  },
+  bookButton: {
+    width: 145,
+    height: 55,
+    borderRadius: 30,
+    backgroundColor: "#F2873B",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bookButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+
+  buttonWrapperLeft: {
+    position: "absolute",
+    top: 40,
+    left: 15,
+  },
+  buttonWrapperRight: {
+    position: "absolute",
+    top: 40,
+    right: 15,
+  },
+  blurButton: {
+    borderRadius: 30,
+    overflow: "hidden",
+  },
+  circularButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonIcon: {
+    width: 24,
+    height: 24,
+  },
 });
 
 export default AccommodationDetail;

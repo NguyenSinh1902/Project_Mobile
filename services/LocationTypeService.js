@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.1.11:3000/location-types";
+const API_BASE_URL = "http://192.168.1.82:3000/location-types";
 
 /**
  * Lấy danh sách tất cả các loại địa điểm (location types).

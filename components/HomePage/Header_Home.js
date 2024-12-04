@@ -1,8 +1,11 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
+import { useNavigation } from '@react-navigation/native';
 
 const Header_Home = ({ customer }) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.header}>
       <Text style={styles.greeting}>Hi, {customer?.name}</Text>
@@ -25,7 +28,10 @@ const Header_Home = ({ customer }) => {
           </TouchableOpacity>
         </BlurView>
         <BlurView intensity={50} tint="dark" style={styles.blurFilter}>
-          <TouchableOpacity style={styles.filterButton}>
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => navigation.navigate("Filter")}
+          >
             <Image
               source={require("../../assets/mage_filter.png")}
               style={styles.filterButtonIcon}

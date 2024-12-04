@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.1.11:3000/favorites";
+const API_BASE_URL = "http://192.168.1.82:3000/favorites";
 
 /**
  * Thêm một accommodation vào danh sách yêu thích của khách hàng.
