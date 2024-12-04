@@ -1,8 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Param } from '@nestjs/common';
 import { AccommodationService } from './accommodation.service';
 import { FilterAccommodationsDto } from './dto/filter-accommodations.dto';
 import { FilterAccommodationByTypeDto } from './dto/filter-accommodation-by-type.dto';
 import { Accommodation } from './accommodation.entity';
+import { AccommodationDTO } from './dto/accommodation.dto';
 
 @Controller('accommodations')
 export class AccommodationController {
@@ -26,5 +27,13 @@ export class AccommodationController {
     return this.accommodationService.filterAccommodations(
       filterAccommodationByTypeDto,
     );
+  }
+
+  // Route lấy thông tin chi tiết accommodation theo ID
+  @Get(':id')
+  async getAccommodationById(
+    @Param('id') id: number,
+  ): Promise<AccommodationDTO> {
+    return this.accommodationService.getAccommodationById(id);
   }
 }

@@ -9,6 +9,9 @@ export class Amenity {
   @Column()
   name: string;
 
+  @Column()
+  image_url: string;
+
   @ManyToMany(() => Accommodation, (accommodation) => accommodation.amenities)
   accommodations: Accommodation[];
 }

@@ -4,6 +4,8 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  Param,
+  Get,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { RegisterCustomerDto } from './dto/register-customer.dto';
@@ -74,6 +76,27 @@ export class CustomerController {
       }
       throw new HttpException(
         'Login failed. Please try again later.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('find-by-phone/:phone')
+  async findByPhone(@Param('phone') phone_number: string) {
+    try {
+      // Gọi hàm findByPhone từ service
+      const customer = await this.customerService.findByPhone(phone_number);
+      if (!customer) {
+        // Nếu không tìm thấy khách hàng, trả về lỗi 404
+        throw new HttpException('Account does not exist', HttpStatus.NOT_FOUND);
+      }
+      // Trả về thông tin khách hàng
+      return customer;
+    } catch (error) {
+      // Nếu có lỗi, trả về lỗi chung
+      console.error('Error fetching customer:', error);
+      throw new HttpException(
+        'Error fetching customer',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

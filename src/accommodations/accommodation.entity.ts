@@ -5,12 +5,15 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Location } from '../locations/location.entity';
-import { AccommodationAmenity } from './accommodation-amenities.entity';
+import { Amenity } from 'src/amenities/amenity.entity';
 import { AccommodationPromotion } from './accommodation-promotions.entity';
 import { Booking } from '../bookings/booking.entity';
 import { Rating } from '../ratings/rating.entity';
+import { CustomerFavoriteAccommodation } from '../customer-favorite-accommodations/customer-favorite-accommodation.entity';
 
 @Entity()
 export class Accommodation {
@@ -45,8 +48,19 @@ export class Accommodation {
   @Column()
   image_url: string;
 
-  @OneToMany(() => AccommodationAmenity, (amenity) => amenity.accommodation)
-  amenities: AccommodationAmenity[];
+  @ManyToMany(() => Amenity, (amenity) => amenity.accommodations)
+  @JoinTable({
+    name: 'accommodation_amenity',
+    joinColumn: {
+      name: 'accommodation_id',
+      referencedColumnName: 'accommodation_id',
+    },
+    inverseJoinColumn: {
+      name: 'amenity_id',
+      referencedColumnName: 'amenity_id',
+    },
+  })
+  amenities: Amenity[];
 
   @OneToMany(
     () => AccommodationPromotion,
@@ -59,4 +73,10 @@ export class Accommodation {
 
   @OneToMany(() => Rating, (rating) => rating.accommodation)
   ratings: Rating[];
+
+  @OneToMany(
+    () => CustomerFavoriteAccommodation,
+    (favorite) => favorite.accommodation,
+  )
+  favorites: CustomerFavoriteAccommodation[];
 }

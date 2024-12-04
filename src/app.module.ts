@@ -6,16 +6,17 @@ import { LocationType } from './location-types/location-type.entity';
 import { Accommodation } from './accommodations/accommodation.entity';
 import { Promotion } from './promotions/promotion.entity';
 import { AccommodationPromotion } from './accommodations/accommodation-promotions.entity';
-import { AccommodationAmenity } from './accommodations/accommodation-amenities.entity';
 import { Rating } from './ratings/rating.entity';
 import { Booking } from './bookings/booking.entity';
 import { Customer } from './customers/customer.entity';
 import { Amenity } from './amenities/amenity.entity';
+import { CustomerFavoriteAccommodation } from './customer-favorite-accommodations/customer-favorite-accommodation.entity';
 
 import { CustomerModule } from './customers/customer.module';
 import { AccommodationModule } from './accommodations/accommodation.module';
 import { LocationTypeModule } from './location-types/location-type.module';
 import { LocationModule } from './locations/location.module';
+import { FavoriteModule } from './customer-favorite-accommodations/customer-favorite-accommodation.module';
 
 @Module({
   imports: [
@@ -36,12 +37,12 @@ import { LocationModule } from './locations/location.module';
           Accommodation,
           Promotion,
           AccommodationPromotion,
-          AccommodationAmenity,
           Rating,
           Booking,
           Customer,
           Amenity,
           LocationType,
+          CustomerFavoriteAccommodation,
         ],
         synchronize: true,
       }),
@@ -50,6 +51,7 @@ import { LocationModule } from './locations/location.module';
     AccommodationModule,
     LocationTypeModule,
     LocationModule,
+    FavoriteModule,
   ],
 })
 export class AppModule {}
