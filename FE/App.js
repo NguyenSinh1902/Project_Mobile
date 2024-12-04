@@ -11,6 +11,13 @@ import Categories_Home from './components/HomePage/Categories_Home'; // Import C
 import Detail_Hotel from './components/Detail_Hotel'; // Import Detail_Hotel component
 import Book_Hotel from './components/Book_Hotel'; // Import Book_Hotel component
 import PaymentSuccessful from './components/PaymentSuccessful'; // Import PaymentSuccessful component
+import Filter from './components/Filter/Filter';
+import AddLocation from './components/Filter/AddLocation';
+import AddTime from './components/Filter/AddTime'; // Import Filter component
+import AddGuests from './components/Filter/AddGuests';
+import AddRating from './components/Filter/AddRating';
+import PriceRange from './components/Filter/PriceRange';
+import Amenities from './components/Filter/Amenities';
 
 const Stack = createStackNavigator();
 
@@ -56,6 +63,41 @@ const App = () => {
         <Stack.Screen 
           name="PaymentSuccessful" 
           component={PaymentSuccessful} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Filter" 
+          component={Filter} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="AddLocation" 
+          component={AddLocation} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="AddTime" 
+          component={AddTime} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="AddGuests" 
+          component={AddGuests} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="AddRating" 
+          component={AddRating} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="PriceRange" 
+          component={PriceRange} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Amenities" 
+          component={Amenities} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>
