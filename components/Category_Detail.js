@@ -7,18 +7,22 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 import { getAllLocationTypes } from "../services/LocationTypeService.js";
 import { getAccommodationsByLocationType } from "../services/AccommodationService.js";
-import { addFavorite, removeFavorite, getFavorites } from "../services/FavoriteService.js";
+import {
+  addFavorite,
+  removeFavorite,
+  getFavorites,
+} from "../services/FavoriteService.js";
 
-import Icon from 'react-native-vector-icons/FontAwesome';;
+import Icon from "react-native-vector-icons/FontAwesome";
 import Header_Home from "./HomePage/Header_Home";
 import Footer_Home from "./HomePage/Footer_Home.js";
+import { BlurView } from "expo-blur";
 
 const Category_Detail = () => {
-
   const route = useRoute();
   const navigation = useNavigation();
 
@@ -26,7 +30,9 @@ const Category_Detail = () => {
 
   const [locationTypes, setLocationTypes] = useState([]);
   const [selectedAccommodations, setSelectedAccommodations] = useState([]);
-  const [selectedLocationType, setSelectedLocationType] = useState(route.params?.locationType || null);
+  const [selectedLocationType, setSelectedLocationType] = useState(
+    route.params?.locationType || null
+  );
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
@@ -46,7 +52,9 @@ const Category_Detail = () => {
     if (selectedLocationType) {
       const fetchAccommodations = async () => {
         try {
-          const accommodations = await getAccommodationsByLocationType(selectedLocationType);
+          const accommodations = await getAccommodationsByLocationType(
+            selectedLocationType
+          );
           setSelectedAccommodations(accommodations);
         } catch (error) {
           console.error("Error fetching accommodations:", error);
@@ -78,16 +86,28 @@ const Category_Detail = () => {
         return;
       }
 
-      if (favorites.some(favorite => favorite.accommodation && favorite.accommodation.accommodation_id === accommodationId)) {
+      if (
+        favorites.some(
+          (favorite) =>
+            favorite.accommodation &&
+            favorite.accommodation.accommodation_id === accommodationId
+        )
+      ) {
         // Remove from favorites
         await removeFavorite(customer.customer_id, accommodationId);
-        setFavorites(prevFavorites => prevFavorites.filter(favorite => 
-          favorite.accommodation.accommodation_id !== accommodationId
-        ));
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter(
+            (favorite) =>
+              favorite.accommodation.accommodation_id !== accommodationId
+          )
+        );
       } else {
         // Add to favorites
         await addFavorite(customer.customer_id, accommodationId);
-        setFavorites(prevFavorites => [...prevFavorites, { accommodation: { accommodation_id: accommodationId } }]);
+        setFavorites((prevFavorites) => [
+          ...prevFavorites,
+          { accommodation: { accommodation_id: accommodationId } },
+        ]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
@@ -95,13 +115,17 @@ const Category_Detail = () => {
   };
 
   const isFavorite = (accommodationId) => {
-    return favorites.some(favorite => favorite.accommodation.accommodation_id === accommodationId);
+    return favorites.some(
+      (favorite) => favorite.accommodation.accommodation_id === accommodationId
+    );
   };
 
   const handleLocationTypePress = async (locationType) => {
     try {
       setSelectedLocationType(locationType);
-      const accommodations = await getAccommodationsByLocationType(locationType);
+      const accommodations = await getAccommodationsByLocationType(
+        locationType
+      );
       setSelectedAccommodations(accommodations);
     } catch (error) {
       console.error("Error fetching accommodations:", error);
@@ -110,12 +134,14 @@ const Category_Detail = () => {
 
   const formatPrice = (price) => {
     const numericPrice = Number(price);
-    return numericPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace("₫", "VND");
+    return numericPrice
+      .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      .replace("₫", "VND");
   };
 
   return (
     <>
-      <Header_Home customer={customer}/>
+      <Header_Home customer={customer} />
       <View style={styles.categoriesContainer}>
         <Text style={styles.categoriesText}>Categories</Text>
       </View>
@@ -126,7 +152,8 @@ const Category_Detail = () => {
           style={styles.categoriesGrid}
         >
           {locationTypes.map((type) => (
-            <TouchableOpacity key={type.location_type_id} 
+            <TouchableOpacity
+              key={type.location_type_id}
               style={styles.categoryBox}
               onPress={() => handleLocationTypePress(type.type)}
             >
@@ -147,12 +174,19 @@ const Category_Detail = () => {
               {selectedLocationType} Locations
             </Text>
           </View>
-          <ScrollView style={styles.accommodationsList} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.accommodationsList}
+            showsVerticalScrollIndicator={false}
+          >
             {selectedAccommodations.map((acc) => (
-              <TouchableOpacity key={acc.accommodation_id} 
+              <TouchableOpacity
+                key={acc.accommodation_id}
                 style={styles.accommodationItem}
                 onPress={() =>
-                  navigation.navigate('AccommodationDetail', { accommodationId: acc.accommodation_id, customer })
+                  navigation.navigate("AccommodationDetail", {
+                    accommodationId: acc.accommodation_id,
+                    customer,
+                  })
                 }
               >
                 <Image
@@ -164,25 +198,30 @@ const Category_Detail = () => {
                   onPress={() => handleFavoriteToggle(acc.accommodation_id)}
                 >
                   <Icon
-                    name={isFavorite(acc.accommodation_id) ? "heart" : "heart-o"}
+                    name={
+                      isFavorite(acc.accommodation_id) ? "heart" : "heart-o"
+                    }
                     size={24}
                     color={isFavorite(acc.accommodation_id) ? "red" : "gray"}
                   />
                 </TouchableOpacity>
-                <Text style={styles.accommodationName}>{acc.name}</Text>
-                <Text style={styles.accommodationPrice}>
-                  {formatPrice(acc.price_per_night)}<Text>/night</Text>
-                </Text>
-                <Text style={styles.accommodationAddress}>
-                  {acc.address}
-                </Text>
-                
+                <BlurView style={styles.blurView} tint="dark" intensity={100}>
+                  <Text style={styles.accommodationName}>{acc.name}</Text>
+                  <Text style={styles.accommodationAddress}>{acc.address}</Text>
+                  <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+                  <Text style={styles.accommodationPrice}>
+                    {formatPrice(acc.price_per_night)}/
+                    <Text style={{ fontSize: 12, fontWeight: 300 }}>1 Day</Text>
+                  </Text>
+                  <Text style={styles.accommodationPrice}> {acc.rating}⭐</Text>
+                  </View>
+                </BlurView>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
       )}
-      <Footer_Home customer={customer}/>
+      <Footer_Home customer={customer} />
     </>
   );
 };
@@ -217,7 +256,7 @@ const styles = StyleSheet.create({
     height: 80,
     flexShrink: 0,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 40,
@@ -248,61 +287,75 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   accommodationsHeader: {
-    alignItems: 'center'
+    alignItems: "center",
   },
   accommodationsHeaderText: {
-    fontStyle: 'italic',
+    fontStyle: "italic",
     fontSize: 24,
     lineHeight: 29,
   },
   accommodationItem: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   accommodationImage: {
-    width: '80%', 
-    height: 200, 
+    width: "80%",
+    height: 200,
     borderRadius: 10,
   },
-  accommodationName: {
-    position: 'absolute',
-    top: 10,
-    left: 50,
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  accommodationPrice: {
-    position: 'absolute',
-    bottom: 30,
-    left: 50,
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  accommodationAddress: {
-    position: 'absolute',
-    bottom: 10,
-    left: 50,
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   favoriteIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 60,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: "rgba(255,255,255,0.8)",
+    borderRadius: 15,
+    padding: 5,
+  },
+  blurView: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    width: "80%",
+    justifyContent: "center",
+    //alignItems: 'center',
+    marginLeft: 40,
+  },
+  accommodationName: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    marginLeft: 10,
+  },
+  accommodationPrice: {
+    color: "#C6E7FF",
+    fontSize: 16,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  accommodationAddress: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "light",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    marginLeft: 10,
+  },
+  favoriteIcon: {
+    position: "absolute",
+    top: 10,
+    right: 60,
+    backgroundColor: "rgba(255,255,255,0.8)",
     borderRadius: 15,
     padding: 5,
   },

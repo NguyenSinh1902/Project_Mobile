@@ -1,11 +1,29 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
 import { useNavigation } from '@react-navigation/native';
 
+import { findCustomerByPhone } from "../../services/CustomerService.js";
+
 const Header_Home = ({ customer }) => {
   const navigation = useNavigation();
+  const [customerApi, setCustomer] = useState(null);
 
+  useEffect(() => {
+    if (customer && customer.phone_number) {
+      const fetchCustomer = async () => {
+        try {
+          const foundCustomer = await findCustomerByPhone(customer.phone_number);
+          setCustomer(foundCustomer); 
+        } catch (error) {
+          setCustomer(null); 
+          console.error("Customer not found or error occurred", error);
+        }
+      };
+  
+      fetchCustomer();
+    }
+  }, [customer?.phone_number]);
   return (
     <View style={styles.header}>
       <Text style={styles.greeting}>Hi, {customer?.name}</Text>
@@ -30,7 +48,7 @@ const Header_Home = ({ customer }) => {
         <BlurView intensity={50} tint="dark" style={styles.blurFilter}>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => navigation.navigate("Filter", {customer: customer})}
+            onPress={() => navigation.navigate("Filter", {customer: customerApi})}
           >
             <Image
               source={require("../../assets/mage_filter.png")}

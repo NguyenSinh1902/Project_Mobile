@@ -3,9 +3,10 @@ import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-const Filter = ({customer}) => {
+const Filter = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { customer } = route.params;
   const selectedLocation = route.params?.selectedLocation;
   const checkInDate = route.params?.checkInDate;
   const checkOutDate = route.params?.checkOutDate;
@@ -17,6 +18,8 @@ const Filter = ({customer}) => {
   const minPrice = route.params?.minPrice;
   const maxPrice = route.params?.maxPrice;
   const amenities = route.params?.amenities;
+
+  console.log("customer: ", customer);
 
   const truncateText = (text, length) => {
     if (text.length > length) {

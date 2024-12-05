@@ -18,6 +18,21 @@ const amenitiesList = [
   "Elevator",
 ];
 
+const amenityIcons = {
+  "Free Wi-Fi": require("../../assets/wifi.png"),
+  "24-Hour Service": require("../../assets/24-hours.png"),
+  "Bathtub": require("../../assets/bathtub.png"),
+  "Love Chair": require("../../assets/ic_round-chair.png"),
+  "Smart TV": require("../../assets/tv.png"),
+  "Air Conditioning": require("../../assets/air-conditioning.png"),
+  "Swimming Pool": require("../../assets/fluent_swimming.png"),
+  "Netflix": require("../../assets/netflix.png"),
+  "Refrigerator": require("../../assets/ep_refrigerator.png"),
+  "Car Parking": require("../../assets/CarParking.png"),
+  "Hair Dryer": require("../../assets/hairdryer.png"),
+  "Elevator": require("../../assets/fluent_elevator.png"),
+};
+
 const Amenities = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -73,7 +88,7 @@ const Amenities = () => {
             renderItem={({ item }) => (
               <View style={styles.amenityContainer}>
                 <Image
-                  source={require("../../assets/weui_back-filled.png")}
+                  source={amenityIcons[item]}
                   style={styles.amenityIcon}
                 />
                 <Text style={styles.amenityText}>{item}</Text>

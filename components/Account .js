@@ -72,16 +72,21 @@ const Account = ({ route, navigation }) => {
 
         <TouchableOpacity
           style={styles.sectionItem}
-          onPress={() => navigation.navigate("BookingHistory")}
+          onPress={() =>
+            navigation.navigate("BookingHistory", { customer: customer })
+          }
         >
+          <Image source={require("../assets/Changehistory.png")} />
           <Text style={styles.sectionText}>Booking History</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Changequickreply.png")} />
           <Text style={styles.sectionText}>Quick Booking</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Hottrend.png")} />
           <Text style={styles.sectionText}>Hot Hotel</Text>
         </TouchableOpacity>
 
@@ -90,14 +95,17 @@ const Account = ({ route, navigation }) => {
         <Text style={styles.sectionHeader}>Setting</Text>
 
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Changelanguage.png")} />
           <Text style={styles.sectionText}>Language</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Changearea.png")} />
           <Text style={styles.sectionText}>Change Area</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Changesettings.png")} />
           <Text style={styles.sectionText}>Setting Notification</Text>
         </TouchableOpacity>
 
@@ -106,6 +114,7 @@ const Account = ({ route, navigation }) => {
         <Text style={styles.sectionHeader}>Information</Text>
 
         <TouchableOpacity style={styles.sectionItem}>
+          <Image source={require("../assets/Changeaccount.png")} />
           <Text style={styles.sectionText}>Change Account</Text>
         </TouchableOpacity>
         <View style={styles.divider} />
@@ -113,6 +122,7 @@ const Account = ({ route, navigation }) => {
           style={styles.sectionItem}
           onPress={() => setShowPasswordForm(!showPasswordForm)}
         >
+          <Image source={require("../assets/Changepassword-solid.png")} />
           <Text style={styles.sectionText}>
             {showPasswordForm ? "Hide Password Form" : "Change Password"}
           </Text>
@@ -169,7 +179,7 @@ const styles = StyleSheet.create({
   headerText: {
     color: "#000",
     textAlign: "center",
-    marginLeft: 100,
+    marginLeft: 80,
     fontSize: 24,
     fontWeight: "500",
   },
@@ -209,9 +219,11 @@ const styles = StyleSheet.create({
   sectionItem: {
     //padding: 15,
     marginHorizontal: 40,
+    flexDirection: "row",
   },
   sectionText: {
     fontSize: 16,
+    marginLeft: 5,
   },
   input: {
     borderWidth: 1,

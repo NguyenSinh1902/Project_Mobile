@@ -94,10 +94,24 @@ const HomestayList = ({ customer }) => {
             </TouchableOpacity>
             <Text style={styles.name}>{accommodation.name}</Text>
             <Text style={{ fontSize: 12 }}>{accommodation.address}</Text>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={{ fontSize: 12, marginTop: 5 }}>1 night</Text>
-              <Text style={{ fontSize: 12, marginTop: 5, fontWeight: 'bold' }}>
-                {formatPrice(accommodation.price_per_night)}
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={{ fontSize: 12, marginTop: 5, marginRight: 5 }}>
+                Rating:{" "}
+                <Text style={{ fontWeight: 500, fontSize: 16 }}>
+                  {accommodation.rating}⭐
+                </Text>
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: 12,
+                  marginTop: 5,
+                  fontWeight: "bold",
+                  color: "#1F509A",
+                }}
+              >
+                {formatPrice(accommodation.price_per_night)}/{" "}
+                <Text style={{ fontSize: 12, fontWeight: 400 }}>1 Day</Text>
               </Text>
             </View>
           </TouchableOpacity>

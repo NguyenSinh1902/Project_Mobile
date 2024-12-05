@@ -649,9 +649,9 @@ const styles = StyleSheet.create({
   amenityContainer: {
     alignItems: "center", 
     marginHorizontal: 15, 
-    backgroundColor: 'white',
+    //backgroundColor: 'white',
     borderRadius: 10,
-    padding: 10
+    //padding: 5
   },
   amenityImage: {
     width: 30, 

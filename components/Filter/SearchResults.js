@@ -7,55 +7,45 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import { useRoute, useNavigation } from '@react-navigation/native';
-
-import { getAllLocationTypes } from "../../services/LocationTypeService.js";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
 import { getAccommodationsByLocationType } from "../../services/AccommodationService.js";
-import { addFavorite, removeFavorite, getFavorites } from "../../services/FavoriteService.js";
-
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Header_Home from "../HomePage/Header_Home.js";
-import Footer_Home from "../HomePage/Footer_Home.js";
+import {
+  addFavorite,
+  removeFavorite,
+  getFavorites,
+} from "../../services/FavoriteService.js";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const SearchResults = () => {
-
   const route = useRoute();
   const navigation = useNavigation();
 
   const { customer } = route.params;
-
-  const [locationTypes, setLocationTypes] = useState([]);
+  console.log(customer);
   const [selectedAccommodations, setSelectedAccommodations] = useState([]);
-  const [selectedLocationType, setSelectedLocationType] = useState(route.params?.locationType || null);
   const [favorites, setFavorites] = useState([]);
 
+  // Loại location mặc định
+  const locationType = "Island";
+
+  // Lấy danh sách accommodation khi component được render
   useEffect(() => {
-    const fetchLocationTypes = async () => {
+    const fetchAccommodations = async () => {
       try {
-        const data = await getAllLocationTypes();
-        setLocationTypes(data);
+        const accommodations = await getAccommodationsByLocationType(
+          locationType
+        );
+        setSelectedAccommodations(accommodations);
       } catch (error) {
-        console.error("Error fetching location types:", error);
+        console.error("Error fetching accommodations:", error);
       }
     };
 
-    fetchLocationTypes();
+    fetchAccommodations();
   }, []);
 
-  useEffect(() => {
-    if (selectedLocationType) {
-      const fetchAccommodations = async () => {
-        try {
-          const accommodations = await getAccommodationsByLocationType(selectedLocationType);
-          setSelectedAccommodations(accommodations);
-        } catch (error) {
-          console.error("Error fetching accommodations:", error);
-        }
-      };
-      fetchAccommodations();
-    }
-  }, [selectedLocationType]);
-
+  // Lấy danh sách yêu thích của người dùng
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -78,14 +68,26 @@ const SearchResults = () => {
         return;
       }
 
-      if (favorites.some(favorite => favorite.accommodation && favorite.accommodation.accommodation_id === accommodationId)) {
+      if (
+        favorites.some(
+          (favorite) =>
+            favorite.accommodation &&
+            favorite.accommodation.accommodation_id === accommodationId
+        )
+      ) {
         await removeFavorite(customer.customer_id, accommodationId);
-        setFavorites(prevFavorites => prevFavorites.filter(favorite => 
-          favorite.accommodation.accommodation_id !== accommodationId
-        ));
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter(
+            (favorite) =>
+              favorite.accommodation.accommodation_id !== accommodationId
+          )
+        );
       } else {
         await addFavorite(customer.customer_id, accommodationId);
-        setFavorites(prevFavorites => [...prevFavorites, { accommodation: { accommodation_id: accommodationId } }]);
+        setFavorites((prevFavorites) => [
+          ...prevFavorites,
+          { accommodation: { accommodation_id: accommodationId } },
+        ]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
@@ -93,22 +95,16 @@ const SearchResults = () => {
   };
 
   const isFavorite = (accommodationId) => {
-    return favorites.some(favorite => favorite.accommodation.accommodation_id === accommodationId);
-  };
-
-  const handleLocationTypePress = async (locationType) => {
-    try {
-      setSelectedLocationType(locationType);
-      const accommodations = await getAccommodationsByLocationType(locationType);
-      setSelectedAccommodations(accommodations);
-    } catch (error) {
-      console.error("Error fetching accommodations:", error);
-    }
+    return favorites.some(
+      (favorite) => favorite.accommodation.accommodation_id === accommodationId
+    );
   };
 
   const formatPrice = (price) => {
     const numericPrice = Number(price);
-    return numericPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace("₫", "VND");
+    return numericPrice
+      .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      .replace("₫", "VND");
   };
 
   return (
@@ -120,49 +116,47 @@ const SearchResults = () => {
             style={styles.backIcon}
           />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Results</Text>
+        <View style={styles.buttonContainer}>
+          <BlurView intensity={50} tint="dark" style={styles.blurSearch}>
+            <TouchableOpacity style={styles.button}>
+              <Image
+                source={require("../../assets/material-symbols_search.png")}
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.buttonText}>Search for your journey</Text>
+            </TouchableOpacity>
+          </BlurView>
+        </View>
       </View>
 
       <View style={styles.divider} />
 
-      <Header_Home customer={customer}/>
-      <View style={styles.categoriesContainer}>
-        <Text style={styles.categoriesText}>Categories</Text>
-      </View>
-      <View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesGrid}
-        >
-          {locationTypes.map((type) => (
-            <TouchableOpacity key={type.location_type_id} 
-              style={styles.categoryBox}
-              onPress={() => handleLocationTypePress(type.type)}
-            >
-              <Image
-                source={{ uri: type.image_url }}
-                style={styles.categoryImage}
-              />
-              <Text style={styles.categoryText}>{type.type}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+      <View style={styles.arrangeFilterContainer}>
+        <View style={styles.arrangeFilterItem}>
+          <Image source={require("../../assets/pepicons-print_down-up.png")} />
+          <Text>Arrange</Text>
+        </View>
+        <View style={styles.arrangeFilterItem}>
+        <Image source={require("../../assets/filter_ne.png")} />
+          <Text>Filter</Text>
+        </View>
       </View>
 
-      {selectedAccommodations.length > 0 && (
-        <View style={{ marginTop: 20, flex: 1, marginBottom: 60 }}>
-          <View style={styles.accommodationsHeader}>
-            <Text style={styles.accommodationsHeaderText}>
-              {selectedLocationType} Locations
-            </Text>
-          </View>
-          <ScrollView style={styles.accommodationsList} showsVerticalScrollIndicator={false}>
+      {selectedAccommodations.length > 0 ? (
+        <View style={{ marginTop: 0, flex: 1, marginBottom: 0 }}>
+          <ScrollView
+            style={styles.accommodationsList}
+            showsVerticalScrollIndicator={false}
+          >
             {selectedAccommodations.map((acc) => (
-              <TouchableOpacity key={acc.accommodation_id} 
+              <TouchableOpacity
+                key={acc.accommodation_id}
                 style={styles.accommodationItem}
                 onPress={() =>
-                  navigation.navigate('AccommodationDetail', { accommodationId: acc.accommodation_id, customer })
+                  navigation.navigate("AccommodationDetail", {
+                    accommodationId: acc.accommodation_id,
+                    customer,
+                  })
                 }
               >
                 <Image
@@ -174,25 +168,43 @@ const SearchResults = () => {
                   onPress={() => handleFavoriteToggle(acc.accommodation_id)}
                 >
                   <Icon
-                    name={isFavorite(acc.accommodation_id) ? "heart" : "heart-o"}
+                    name={
+                      isFavorite(acc.accommodation_id) ? "heart" : "heart-o"
+                    }
                     size={24}
                     color={isFavorite(acc.accommodation_id) ? "red" : "gray"}
                   />
                 </TouchableOpacity>
-                <Text style={styles.accommodationName}>{acc.name}</Text>
-                <Text style={styles.accommodationPrice}>
-                  {formatPrice(acc.price_per_night)}<Text>/night</Text>
-                </Text>
-                <Text style={styles.accommodationAddress}>
-                  {acc.address}
-                </Text>
-                
+                <BlurView style={styles.blurView} tint="dark" intensity={100}>
+                  <Text style={styles.accommodationName}>{acc.name}</Text>
+                  <Text style={styles.accommodationAddress}>{acc.address}</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text style={styles.accommodationPrice}>
+                      {formatPrice(acc.price_per_night)}/
+                      <Text style={{ fontSize: 12, fontWeight: 300 }}>
+                        1 Day
+                      </Text>
+                    </Text>
+                    <Text style={styles.accommodationPrice}>
+                      {" "}
+                      {acc.rating}⭐
+                    </Text>
+                  </View>
+                </BlurView>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
+      ) : (
+        <Text style={{ textAlign: "center", marginTop: 20 }}>
+          No accommodations found.
+        </Text>
       )}
-      <Footer_Home customer={customer}/>
     </>
   );
 };
@@ -202,6 +214,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 50,
+  },
+  // buttonContainer: {
+  //   flexDirection: "row",
+  //   position: "absolute",
+  //   top: 170,
+  //   left: 20,
+  //   zIndex: 1,
+  // },
+  blurSearch: {
+    borderRadius: 35,
+    overflow: "hidden",
+    width: 300,
+    height: 45,
+    marginLeft: 45,
+  },
+  button: {
+    width: 300,
+    height: 45,
+    flexShrink: 0,
+    borderRadius: 35,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  buttonIcon: {
+    width: 24.662,
+    height: 25.055,
+    marginRight: 10,
+    marginLeft: 20,
   },
   backIcon: {
     marginLeft: 10,
@@ -215,11 +255,31 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: "100%",
-    height: 2,
+    height: 0.3,
     backgroundColor: "#E0E0E0",
     marginTop: 5,
-    marginBottom: 20,
+    //marginBottom: 20,
   },
+
+  arrangeFilterContainer: {
+    flexDirection: "row",
+    width: "100%",
+    height: 46,
+    borderWidth: 1,
+    borderColor: "#000",
+  },
+  arrangeFilterItem: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRightWidth: 0.3,
+    borderColor: "#000",
+  },
+  arrangeFilterItemLast: {
+    borderRightWidth: 0,
+  },
+
   categoriesContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -243,7 +303,7 @@ const styles = StyleSheet.create({
     height: 80,
     flexShrink: 0,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 40,
@@ -262,67 +322,73 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontStyle: "normal",
     fontWeight: "500",
-    marginTop: 40,
+    //marginTop: 40,
   },
   accommodationsList: {
     marginTop: 15,
   },
   accommodationsHeader: {
-    alignItems: 'center'
+    alignItems: "center",
   },
   accommodationsHeaderText: {
-    fontStyle: 'italic',
+    fontStyle: "italic",
     fontSize: 24,
-    lineHeight: 29,
+    //lineHeight: 29,
   },
   accommodationItem: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   accommodationImage: {
-    width: '80%', 
-    height: 200, 
+    width: "80%",
+    height: 200,
     borderRadius: 10,
   },
+  blurView: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    width: "80%",
+    justifyContent: "center",
+    //alignItems: 'center',
+    marginLeft: 40,
+  },
   accommodationName: {
-    position: 'absolute',
-    top: 10,
-    left: 50,
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    marginLeft: 10,
   },
   accommodationPrice: {
-    position: 'absolute',
-    bottom: 30,
-    left: 50,
-    color: 'white',
+    color: "#C6E7FF",
     fontSize: 16,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    marginLeft: 10,
+    marginRight: 10,
   },
   accommodationAddress: {
-    position: 'absolute',
-    bottom: 10,
-    left: 50,
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    color: "white",
+    fontSize: 12,
+    fontWeight: "light",
+    textShadowColor: "rgba(0, 0, 0, 0.7)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    marginLeft: 10,
   },
   favoriteIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 60,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: "rgba(255,255,255,0.8)",
     borderRadius: 15,
     padding: 5,
   },
