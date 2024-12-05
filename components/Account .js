@@ -1,103 +1,249 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Image,
+  ScrollView,
+} from "react-native";
 // import { updatePassword } from '../services/AccountService';
 
 import Footer_Home from "./HomePage/Footer_Home.js";
 
 const Account = ({ route, navigation }) => {
-    const { customer } = route.params;
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+  const { customer } = route.params;
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
-    const handlePasswordChange = async () => {
-        if (newPassword !== confirmPassword) {
-        Alert.alert('Error', 'Passwords do not match!');
-        return;
-        }
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match!");
+      return;
+    }
 
-        try {
-        await updatePassword(customer.customer_id, newPassword);
-        Alert.alert('Success', 'Password updated successfully!');
-        } catch (error) {
-        Alert.alert('Error', 'Failed to update password.');
-        }
-    };
+    try {
+      await updatePassword(customer.customer_id, newPassword);
+      Alert.alert("Success", "Password updated successfully!");
+    } catch (error) {
+      Alert.alert("Error", "Failed to update password.");
+    }
+  };
 
-    const handleLogout = () => {
-        try {
-        navigation.navigate('GetStarted');
-        } catch (error) {
-        Alert.alert('Error', 'Failed to log out.');
-        }
-    };
+  const handleLogout = () => {
+    try {
+      navigation.navigate("GetStarted");
+    } catch (error) {
+      Alert.alert("Error", "Failed to log out.");
+    }
+  };
 
-    return (
-        <>
-            <View style={styles.container}>
-                <Text style={styles.header}>Account Information</Text>
-                <Text style={styles.label}>Name: {customer.name}</Text>
-                <Text style={styles.label}>Phone: {customer.phone_number}</Text>
+  return (
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require("../assets/back-filled.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Account Information</Text>
+        </View>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="New Password"
-                    secureTextEntry
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Confirm Password"
-                    secureTextEntry
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                />
+        <Image
+          source={require("../assets/coverphoto.png")}
+          style={styles.coverPhoto}
+        />
+        <Image
+          source={require("../assets/avatar_acc.png")}
+          style={styles.avatar}
+        />
 
-                <TouchableOpacity style={styles.button} onPress={handlePasswordChange}>
-                    <Text style={styles.buttonText}>Change Password</Text>
-                </TouchableOpacity>
+        <Text style={styles.labelLeft}>Name: {customer.name}</Text>
+        <Text style={styles.labelLeft}>Phone: {customer.phone_number}</Text>
 
-                <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                    <Text style={styles.buttonText}>Log Out</Text>
-                </TouchableOpacity>
-            </View>
-            <Footer_Home customer={customer}/>
-        </>
-    );
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionHeader}>My Page</Text>
+
+        <TouchableOpacity
+          style={styles.sectionItem}
+          onPress={() => navigation.navigate("BookingHistory")}
+        >
+          <Text style={styles.sectionText}>Booking History</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Quick Booking</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Hot Hotel</Text>
+        </TouchableOpacity>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionHeader}>Setting</Text>
+
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Language</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Change Area</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Setting Notification</Text>
+        </TouchableOpacity>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.sectionHeader}>Information</Text>
+
+        <TouchableOpacity style={styles.sectionItem}>
+          <Text style={styles.sectionText}>Change Account</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity
+          style={styles.sectionItem}
+          onPress={() => setShowPasswordForm(!showPasswordForm)}
+        >
+          <Text style={styles.sectionText}>
+            {showPasswordForm ? "Hide Password Form" : "Change Password"}
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+
+        {showPasswordForm && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handlePasswordChange}
+            >
+              <Text style={styles.buttonText}>Change Password</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Log Out</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+    backgroundColor: "#F2F2F2",
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  backIcon: {
+    marginLeft: 10,
+  },
+  headerText: {
+    color: "#000",
+    textAlign: "center",
+    marginLeft: 100,
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "500",
+  },
+  coverPhoto: {
+    width: "100%",
+    height: 150,
+  },
+  avatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    alignSelf: "center",
+    marginTop: -75,
+    borderWidth: 3,
+    borderColor: "#fff",
+  },
+  divider: {
+    width: "100%",
+    height: 2,
+    backgroundColor: "#E0E0E0",
+    marginTop: 3,
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
+  labelLeft: {
+    fontSize: 18,
     marginBottom: 10,
+    textAlign: "left",
+    fontWeight: "bold",
+    marginLeft: 20,
+  },
+  sectionHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 20,
+    marginBottom: 10,
+  },
+  sectionItem: {
+    //padding: 15,
+    marginHorizontal: 40,
+  },
+  sectionText: {
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
     fontSize: 16,
+    marginHorizontal: 20,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: "#FECDA6",
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 15,
     marginBottom: 15,
+    marginHorizontal: 20,
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  logoutButton: {
+    backgroundColor: "#FF5B22",
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 15,
+    marginHorizontal: 20,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    textAlign: "center",
     fontSize: 16,
   },
 });

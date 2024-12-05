@@ -16,7 +16,13 @@ const AccommodationDetail = ({ route }) => {
   const { accommodationId, customer } = route.params;
   const [accommodation, setAccommodation] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const navigation = useNavigation();
+
+  const MAX_LENGTH = 100;
+  const now = new Date();
+  const currentDate = new Date(now.setHours(12, 0, 0, 0));
+
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
@@ -62,6 +68,19 @@ const AccommodationDetail = ({ route }) => {
       "Le Minh": "Breakfast was delicious with a variety of options.",
     },
   };
+
+  const calculateDiscountAmount = (price, discountPercentage) => {
+    return (price * discountPercentage) / 100;
+  };
+
+  const description = showFullDescription
+    ? accommodation.description
+    : `${accommodation.description.slice(0, MAX_LENGTH)}...`;
+  
+  const nextDay = new Date(currentDate);
+  nextDay.setDate(currentDate.getDate() + 1);
+  const formattedStart = currentDate.toLocaleString("en-GB", { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+  const formattedEnd = nextDay.toLocaleString("en-GB", { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
 
   return (
     <>
@@ -125,18 +144,39 @@ const AccommodationDetail = ({ route }) => {
         </View>
 
         <View style={styles.horizontalLine} />
+          {accommodation.promotions && accommodation.promotions.length > 0 && (
+            <>
+              {accommodation.promotions.map((promo) => {
+                // Tính số tiền giảm
+                const discountAmount = calculateDiscountAmount(
+                  accommodation.price_per_night,
+                  promo.discount_percentage
+                );
 
-        <View
-          style={{
-            flexDirection: "row",
-            marginLeft: 10,
-            marginTop: 5,
-            marginBottom: 5,
-          }}
-        >
-          <Image source={require("../assets/tdesign_discount.png")} />
-          <Text style={styles.hotelVoucher}>50% off, maximum 30k</Text>
-        </View>
+                return (
+                  <View key={promo.promotion_id} style={styles.promotion}>
+                    {/* <Text style={styles.promoName}>{promo.name}</Text>
+                    <Text>Discount: {promo.discount_percentage}%</Text>
+                    <Text>Valid from {promo.start_date} to {promo.end_date}</Text>
+                    <Text>You save: {discountAmount.toLocaleString()} VNĐ</Text> */}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginLeft: 10,
+                        marginTop: 5,
+                        marginBottom: 5,
+                      }}
+                    >
+                      <Image source={require("../assets/tdesign_discount.png")} />
+                      <Text style={styles.hotelVoucher}>
+                        {promo.discount_percentage}% off, maximum {discountAmount.toLocaleString()} VNĐ
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </>
+          )}
 
         <View style={styles.horizontalLine} />
 
@@ -144,63 +184,46 @@ const AccommodationDetail = ({ route }) => {
           <Text style={{ fontSize: 18, fontWeight: 500, marginBottom: 5 }}>
             Hotel Amenities
           </Text>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-around" }}
+          <ScrollView
+            horizontal={true} 
+            showsHorizontalScrollIndicator={false} 
+            contentContainerStyle={styles.amenitiesContainer} 
           >
-            <View style={styles.facilityContainer}>
-              <Image source={require("../assets/pepicons-pop_wifi.png")} />
-              <Text>Free Wi-Fi</Text>
-            </View>
-            <View style={styles.facilityContainer}>
-              <Image
-                source={require("../assets/game-icons_water-bottle.png")}
-              />
-              <Text style={{ textAlign: "center" }}>
-                Complimentary {"\n"}Water
-              </Text>
-            </View>
-            <View style={styles.facilityContainer}>
-              <Image
-                source={require("../assets/material-symbols_chair-outline.png")}
-              />
-              <Text style={{}}>Love Chair</Text>
-            </View>
-            <View style={styles.facilityContainer}>
-              <Image source={require("../assets/mdi_hours-24.png")} />
-              <Text style={{}}>24-Hour Service</Text>
-            </View>
-          </View>
-          <TouchableOpacity>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                marginRight: 10,
-              }}
-            >
-              <Text style={{ color: "#F86D0A" }}>See all</Text>
-              <Image source={require("../assets/weui_arrow-filled.png")} />
-            </View>
-          </TouchableOpacity>
+            {accommodation.amenities.map((amenity) => (
+              <View key={amenity.amenity_id} style={styles.amenityContainer}>
+                {/* Hiển thị hình ảnh */}
+                <Image
+                  source={{ uri: amenity.image_url }}
+                  style={styles.amenityImage}
+                  resizeMode="contain"
+                />
+                {/* Hiển thị tên tiện nghi */}
+                <Text style={styles.amenityName}>{amenity.name}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
 
         <View style={styles.horizontalLine} />
 
         <View style={styles.containerAmenities}>
-          <Text style={{ fontSize: 18, fontWeight: 500 }}>Overview</Text>
-          <Text style={{ fontSize: 16, fontWeight: 500, color: "#666" }}>
-            Welcome to Swiss-Belresort !
+          <Text style={{ fontSize: 18, fontWeight: "500" }}>Overview</Text>
+          <Text style={{ fontSize: 16, fontWeight: "500", color: "#666" }}>
+            Welcome to {accommodation.name}!
           </Text>
-          <View style={{ marginBottom: 5 }}>
-            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666" }}>
-              Located at 007 KDL Hồ Tuyền Lâm, Ward 3, Đà Lạt, Lâm Đồng 061000,
-              Vietnam, Swiss-Belresort offers a luxurious and comfortable haven
-              for travelers around t...
-              <Text
-                style={{ fontSize: 16, fontWeight: "400", color: "#F86D0A" }}
-              >
-                Read more
-              </Text>
+          <View style={{ marginBottom: 5, backgroundColor: 'white', padding: 5, marginTop: 10, borderRadius: 10 }}>
+            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666", flexDirection: "row", flexWrap: "wrap" }}>
+              {description}
+              {!showFullDescription && accommodation.description.length > MAX_LENGTH && (
+                <TouchableOpacity onPress={() => setShowFullDescription(true)}>
+                  <Text style={styles.readMore}> Read more</Text>
+                </TouchableOpacity>
+              )}
+              {showFullDescription && (
+                <TouchableOpacity onPress={() => setShowFullDescription(false)}>
+                  <Text style={styles.readMore}> Show less</Text>
+                </TouchableOpacity>
+              )}
             </Text>
           </View>
         </View>
@@ -397,8 +420,8 @@ const AccommodationDetail = ({ route }) => {
         <View style={styles.timeContainer}>
           <Text>
             {" "}
-            <Image source={require("../assets/mdi_weather-night.png")} /> 01
-            Night | 22:00, 05/12/ - 12:00, 06/12
+            <Image source={require("../assets/mdi_weather-night.png")} /> 
+            {" 01 Night | "} {formattedStart} - {formattedEnd}
           </Text>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -414,8 +437,9 @@ const AccommodationDetail = ({ route }) => {
 
             <Text style={styles.nowPrice}>
               Now:{" "}
-              {(accommodation.price_per_night * 0.9).toLocaleString("vi-VN")}{" "}
+                {(accommodation.price_per_night - (accommodation.price_per_night * (accommodation.promotions[0].discount_percentage / 100))).toLocaleString("vi-VN")}{" "}
               VND
+              
             </Text>
           </View>
           <TouchableOpacity
@@ -424,6 +448,7 @@ const AccommodationDetail = ({ route }) => {
               navigation.navigate("Book_Hotel", {
                 accommodationId: accommodationId,
                 customer: customer,
+                price: (accommodation.price_per_night - (accommodation.price_per_night * (accommodation.promotions[0].discount_percentage / 100))),
               })
             }
           >
@@ -519,6 +544,7 @@ const styles = StyleSheet.create({
   containerAmenities: {
     marginTop: 5,
     marginLeft: 10,
+    marginRight: 10,
   },
   facilityContainer: {
     alignItems: "center",
@@ -614,6 +640,31 @@ const styles = StyleSheet.create({
   buttonIcon: {
     width: 24,
     height: 24,
+  },
+  amenitiesContainer: {
+    paddingVertical: 10, 
+    flexDirection: "row", 
+    alignItems: "center",
+  },
+  amenityContainer: {
+    alignItems: "center", 
+    marginHorizontal: 15, 
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10
+  },
+  amenityImage: {
+    width: 30, 
+    height: 30,
+    marginBottom: 5, 
+  },
+  amenityName: {
+    fontSize: 14,
+    textAlign: "center",
+  },
+  readMore: {
+    color: "#F86D0A",
+    marginLeft: 5, 
   },
 });
 

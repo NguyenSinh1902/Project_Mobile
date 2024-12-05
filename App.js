@@ -13,12 +13,16 @@ import AccommodationDetail from "./components/Accomodation_Detail";
 import Book_Hotel from './components/Book_Hotel';
 import PaymentSuccessful from './components/PaymentSuccessful';
 import Filter from './components/Filter/Filter';
+import SearchResults from "./components/Filter/SearchResults";
 import AddLocation from './components/Filter/AddLocation';
 import AddTime from './components/Filter/AddTime';
 import AddGuests from './components/Filter/AddGuests';
 import AddRating from './components/Filter/AddRating';
 import PriceRange from './components/Filter/PriceRange';
 import Amenities from './components/Filter/Amenities';
+import BookingHistory from "./components/BookingHistory";
+import PaymentMethod from "./components/PaymentMethod";
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -108,6 +112,21 @@ const App = () => {
         <Stack.Screen 
           name="Amenities" 
           component={Amenities} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="SearchResults" 
+          component={SearchResults} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="BookingHistory" 
+          component={BookingHistory} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="PaymentMethod" 
+          component={PaymentMethod} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>

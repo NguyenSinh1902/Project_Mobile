@@ -30,7 +30,7 @@ const Header_Home = ({ customer }) => {
         <BlurView intensity={50} tint="dark" style={styles.blurFilter}>
           <TouchableOpacity
             style={styles.filterButton}
-            onPress={() => navigation.navigate("Filter")}
+            onPress={() => navigation.navigate("Filter", {customer: customer})}
           >
             <Image
               source={require("../../assets/mage_filter.png")}

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getAccommodationById } from "../services/AccommodationService";
+
 const PaymentSuccessful = ({ route }) => {
   const navigation = useNavigation();
-  const { accommodationId, customer } = route.params;
+  const { accommodationId, customer, booking, value } = route.params;
   const [accommodation, setAccommodation] = useState(null);
 
   useEffect(() => {
@@ -34,6 +35,26 @@ const PaymentSuccessful = ({ route }) => {
       .replace("₫", "VND");
   };
 
+  // Lấy thời gian hiện tại và format theo HH:mm
+  const getTime = () => {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  // Lấy ngày hiện tại và format theo dd-MM-yyyy
+  const getDate = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = now.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const time = getTime();
+  const date = getDate();
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -46,24 +67,24 @@ const PaymentSuccessful = ({ route }) => {
           <Text style={styles.title}>Payment Successful</Text>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Payment ID</Text>
-            <Text style={styles.value}>15975360</Text>
+            <Text style={styles.value}>{booking.booking_id}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Time</Text>
-            <Text style={styles.value}>08:35 AM</Text>
+            <Text style={styles.value}>{time}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Date</Text>
-            <Text style={styles.value}>11/08/2024</Text>
+            <Text style={styles.value}>{date}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Payment Method</Text>
-            <Text style={styles.value}>MOMO</Text>
+            <Text style={styles.value}>{value}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Amount</Text>
             <Text style={styles.value}>
-              {formatPrice(accommodation.price_per_night * 0.9)}
+              {formatPrice(booking.total_price)}
             </Text>
           </View>
 
@@ -85,9 +106,15 @@ const PaymentSuccessful = ({ route }) => {
               <Image source={require("../assets/home-button.png")} />
               <Text style={styles.buttonText}>Back to Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity 
+              style={styles.button}
+              onPress={() =>
+                navigation.navigate("BookingHistory", {
+                  customer: customer,
+                })
+              }>
               <Image source={require("../assets/mi_share.png")} />
-              <Text style={styles.buttonText}>Share</Text>
+              <Text style={styles.buttonText}>My Booking</Text>
             </TouchableOpacity>
           </View>
         </View>

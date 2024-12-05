@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     width: 394,
     color: "#FFF",
     textAlign: "center",
-    fontFamily: "Cabin",
     fontSize: 32,
     fontStyle: "normal",
     fontWeight: "500",
@@ -113,7 +112,6 @@ const styles = StyleSheet.create({
   signInText: {
     color: "#FFF",
     textAlign: "center",
-    fontFamily: "Cabin",
     fontSize: 32,
     fontStyle: "normal",
     fontWeight: "500",
@@ -129,7 +127,6 @@ const styles = StyleSheet.create({
   createAccountText: {
     color: "#FFF",
     textAlign: "center",
-    fontFamily: "Cabin",
     fontSize: 20,
     fontStyle: "normal",
     fontWeight: "500",

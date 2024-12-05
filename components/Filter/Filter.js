@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-const Filter = () => {
+const Filter = ({customer}) => {
   const navigation = useNavigation();
   const route = useRoute();
   const selectedLocation = route.params?.selectedLocation;
@@ -210,7 +210,9 @@ const Filter = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} 
+            onPress={ () => navigation.navigate('SearchResults', {customer: customer})}
+          >
           <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: "100%",
-    height: 5,
+    height: 2,
     backgroundColor: "#E0E0E0",
     marginTop: 5,
   },
