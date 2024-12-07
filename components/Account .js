@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,15 +9,35 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-// import { updatePassword } from '../services/AccountService';
-
-import Footer_Home from "./HomePage/Footer_Home.js";
+import { findBookingByCustomerId } from "../services/BookingService";
 
 const Account = ({ route, navigation }) => {
   const { customer } = route.params;
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const data = await findBookingByCustomerId(customer.customer_id);
+        const updatedBookings = data.map(booking => ({
+          ...booking,
+          time: new Date(booking.booking_date).toLocaleTimeString(),
+          date: new Date(booking.booking_date).toLocaleDateString(),
+          formattedPrice: Number(booking.total_price)
+            .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+            .replace("₫", "VND"),
+        }));
+        setBookings(updatedBookings);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+
+    fetchBookings();
+  }, [customer]);
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
@@ -73,7 +93,7 @@ const Account = ({ route, navigation }) => {
         <TouchableOpacity
           style={styles.sectionItem}
           onPress={() =>
-            navigation.navigate("BookingHistory", { customer: customer })
+            navigation.navigate("BookingHistory", { customer: customer, bookings: bookings })
           }
         >
           <Image source={require("../assets/Changehistory.png")} />

@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
@@ -19,41 +18,39 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  
+  const [error, setError] = useState("");
+
   const navigation = useNavigation();
 
   const validateInputs = () => {
     if (!name || !phone_number || !password || !confirmPassword) {
-      Alert.alert("Error", "All fields are required!");
+      setError("All fields are required!");
       return false;
     }
 
-    // Validate name (length > 6)
     if (name.length <= 6) {
-      Alert.alert("Error", "Name must be more than 6 characters.");
+      setError("Name must be more than 6 characters.");
       return false;
     }
 
-    // Validate phone_number (exactly 10 digits)
     if (!/^\d{10}$/.test(phone_number)) {
-      Alert.alert("Error", "Phone number must be exactly 10 digits.");
+      setError("Phone number must be exactly 10 digits.");
       return false;
     }
 
-    // Validate password (at least 1 uppercase, 1 special character, and > 12 characters)
     if (!/(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{12,})/.test(password)) {
-      Alert.alert(
-        "Error",
-        "Password must be at least 12 characters long, include 1 uppercase letter, and 1 special character.",
+      setError(
+        "Password must be at least 12 characters long, include 1 uppercase letter, and 1 special character."
       );
       return false;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match!");
+      setError("Passwords do not match!");
       return false;
     }
 
+    setError("");
     return true;
   };
 
@@ -61,18 +58,14 @@ const Register = () => {
     if (!validateInputs()) return;
 
     try {
-      const data = { name, phone_number, password }; 
+      const data = { name, phone_number, password };
       const response = await registerCustomer(data);
-      Alert.alert("Success", "Registration successful!");
+      setError("Registration successful!");
       navigation.navigate("Login");
     } catch (error) {
-      Alert.alert(
-        "Error",
-        error.response?.data?.message || "Registration failed.",
-      );
+      setError(error.response?.data?.message || "Registration failed.");
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -87,25 +80,26 @@ const Register = () => {
         />
       </View>
       <Text style={styles.title}>Sign Up</Text>
+      
       <View style={styles.inputContainer}>
         <Icon name="user" size={15} color="#888" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Name" 
+          placeholder="Name"
           placeholderTextColor="#888"
           value={name}
-          onChangeText={setName} 
+          onChangeText={setName}
         />
       </View>
       <View style={styles.inputContainer}>
         <Icon name="phone" size={15} color="#888" style={styles.icon} />
         <TextInput
           style={styles.input}
-          placeholder="Phone Number" 
+          placeholder="Phone Number"
           placeholderTextColor="#888"
           keyboardType="phone-pad"
-          value={phone_number} 
-          onChangeText={setPhoneNumber} 
+          value={phone_number}
+          onChangeText={setPhoneNumber}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -151,6 +145,8 @@ const Register = () => {
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
       <View style={styles.signUpContainer}>
         <Text style={styles.signUpText}>Do you have account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -215,7 +211,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     position: "absolute",
-    bottom: -60,
+    bottom: -50,
   },
   title: {
     fontSize: 36,
@@ -318,6 +314,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
+  },
+  errorText: {
+    color: "red",
+    marginTop: 10,
   },
 });
 

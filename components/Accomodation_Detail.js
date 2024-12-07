@@ -17,12 +17,12 @@ const AccommodationDetail = ({ route }) => {
   const [accommodation, setAccommodation] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [showImages, setShowImages] = useState(false);
   const navigation = useNavigation();
 
   const MAX_LENGTH = 100;
   const now = new Date();
   const currentDate = new Date(now.setHours(12, 0, 0, 0));
-
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
@@ -51,14 +51,6 @@ const AccommodationDetail = ({ route }) => {
       .replace("₫", "VND");
   };
 
-  const handleScroll = (event) => {
-    const index = Math.floor(
-      event.nativeEvent.contentOffset.x /
-        event.nativeEvent.layoutMeasurement.width
-    );
-    setCurrentIndex(index);
-  };
-
   const hotel = {
     comments: {
       "Phuong Thao": "Absolutely loved the panoramic mountain views!",
@@ -69,6 +61,23 @@ const AccommodationDetail = ({ route }) => {
     },
   };
 
+  //Image Room
+  
+  const ImageRoom = [
+    require("../assets/Room1.jpg"),
+    require("../assets/Room2.jpg"),
+    require("../assets/Room3.jpg"),
+    require("../assets/Room4.jpg"),
+  ];
+
+  const handleScroll = (event) => {
+    const index = Math.floor(
+      event.nativeEvent.contentOffset.x /
+        event.nativeEvent.layoutMeasurement.width
+    );
+    setCurrentIndex(index);
+  };
+
   const calculateDiscountAmount = (price, discountPercentage) => {
     return (price * discountPercentage) / 100;
   };
@@ -76,11 +85,21 @@ const AccommodationDetail = ({ route }) => {
   const description = showFullDescription
     ? accommodation.description
     : `${accommodation.description.slice(0, MAX_LENGTH)}...`;
-  
+
   const nextDay = new Date(currentDate);
   nextDay.setDate(currentDate.getDate() + 1);
-  const formattedStart = currentDate.toLocaleString("en-GB", { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
-  const formattedEnd = nextDay.toLocaleString("en-GB", { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+  const formattedStart = currentDate.toLocaleString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+  });
+  const formattedEnd = nextDay.toLocaleString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+  });
 
   return (
     <>
@@ -144,39 +163,36 @@ const AccommodationDetail = ({ route }) => {
         </View>
 
         <View style={styles.horizontalLine} />
-          {accommodation.promotions && accommodation.promotions.length > 0 && (
-            <>
-              {accommodation.promotions.map((promo) => {
-                // Tính số tiền giảm
-                const discountAmount = calculateDiscountAmount(
-                  accommodation.price_per_night,
-                  promo.discount_percentage
-                );
+        {accommodation.promotions && accommodation.promotions.length > 0 && (
+          <>
+            {accommodation.promotions.map((promo) => {
+              // Tính số tiền giảm
+              const discountAmount = calculateDiscountAmount(
+                accommodation.price_per_night,
+                promo.discount_percentage
+              );
 
-                return (
-                  <View key={promo.promotion_id} style={styles.promotion}>
-                    {/* <Text style={styles.promoName}>{promo.name}</Text>
-                    <Text>Discount: {promo.discount_percentage}%</Text>
-                    <Text>Valid from {promo.start_date} to {promo.end_date}</Text>
-                    <Text>You save: {discountAmount.toLocaleString()} VNĐ</Text> */}
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        marginLeft: 10,
-                        marginTop: 5,
-                        marginBottom: 5,
-                      }}
-                    >
-                      <Image source={require("../assets/tdesign_discount.png")} />
-                      <Text style={styles.hotelVoucher}>
-                        {promo.discount_percentage}% off, maximum {discountAmount.toLocaleString()} VNĐ
-                      </Text>
-                    </View>
+              return (
+                <View key={promo.promotion_id} style={styles.promotion}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginLeft: 10,
+                      marginTop: 5,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <Image source={require("../assets/tdesign_discount.png")} />
+                    <Text style={styles.hotelVoucher}>
+                      {promo.discount_percentage}% off, maximum{" "}
+                      {discountAmount.toLocaleString()} VNĐ
+                    </Text>
                   </View>
-                );
-              })}
-            </>
-          )}
+                </View>
+              );
+            })}
+          </>
+        )}
 
         <View style={styles.horizontalLine} />
 
@@ -185,9 +201,9 @@ const AccommodationDetail = ({ route }) => {
             Hotel Amenities
           </Text>
           <ScrollView
-            horizontal={true} 
-            showsHorizontalScrollIndicator={false} 
-            contentContainerStyle={styles.amenitiesContainer} 
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.amenitiesContainer}
           >
             {accommodation.amenities.map((amenity) => (
               <View key={amenity.amenity_id} style={styles.amenityContainer}>
@@ -211,14 +227,33 @@ const AccommodationDetail = ({ route }) => {
           <Text style={{ fontSize: 16, fontWeight: "500", color: "#666" }}>
             Welcome to {accommodation.name}!
           </Text>
-          <View style={{ marginBottom: 5, backgroundColor: 'white', padding: 5, marginTop: 10, borderRadius: 10 }}>
-            <Text style={{ fontSize: 15, fontWeight: "400", color: "#666", flexDirection: "row", flexWrap: "wrap" }}>
+          <View
+            style={{
+              marginBottom: 5,
+              backgroundColor: "white",
+              padding: 5,
+              marginTop: 10,
+              borderRadius: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "400",
+                color: "#666",
+                flexDirection: "row",
+                flexWrap: "wrap",
+              }}
+            >
               {description}
-              {!showFullDescription && accommodation.description.length > MAX_LENGTH && (
-                <TouchableOpacity onPress={() => setShowFullDescription(true)}>
-                  <Text style={styles.readMore}> Read more</Text>
-                </TouchableOpacity>
-              )}
+              {!showFullDescription &&
+                accommodation.description.length > MAX_LENGTH && (
+                  <TouchableOpacity
+                    onPress={() => setShowFullDescription(true)}
+                  >
+                    <Text style={styles.readMore}> Read more</Text>
+                  </TouchableOpacity>
+                )}
               {showFullDescription && (
                 <TouchableOpacity onPress={() => setShowFullDescription(false)}>
                   <Text style={styles.readMore}> Show less</Text>
@@ -226,6 +261,31 @@ const AccommodationDetail = ({ route }) => {
               )}
             </Text>
           </View>
+
+          <TouchableOpacity
+            style={styles.showImagesButton}
+            onPress={() => setShowImages(!showImages)}
+          >
+            <Text style={styles.showImagesButtonText}>
+              {showImages ? "Hide Images" : "Show Images"}
+            </Text>
+          </TouchableOpacity>
+
+          {showImages && (
+            <View style={styles.flatListContainer}>
+              <FlatList
+                data={ImageRoom}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onScroll={({ nativeEvent }) => handleScroll({ nativeEvent })}
+                renderItem={({ item }) => (
+                  <Image source={item} style={styles.flatListImage} />
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )}
         </View>
 
         <View style={styles.horizontalLine} />
@@ -420,8 +480,8 @@ const AccommodationDetail = ({ route }) => {
         <View style={styles.timeContainer}>
           <Text>
             {" "}
-            <Image source={require("../assets/mdi_weather-night.png")} /> 
-            {" 01 Night | "} {formattedStart} - {formattedEnd}
+            <Image source={require("../assets/mdi_weather-night.png")} />
+            {" 01 Day | "} {formattedStart} - {formattedEnd}
           </Text>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -437,9 +497,12 @@ const AccommodationDetail = ({ route }) => {
 
             <Text style={styles.nowPrice}>
               Now:{" "}
-                {(accommodation.price_per_night - (accommodation.price_per_night * (accommodation.promotions[0].discount_percentage / 100))).toLocaleString("vi-VN")}{" "}
+              {(
+                accommodation.price_per_night -
+                accommodation.price_per_night *
+                  (accommodation.promotions[0].discount_percentage / 100)
+              ).toLocaleString("vi-VN")}{" "}
               VND
-              
             </Text>
           </View>
           <TouchableOpacity
@@ -448,7 +511,10 @@ const AccommodationDetail = ({ route }) => {
               navigation.navigate("Book_Hotel", {
                 accommodationId: accommodationId,
                 customer: customer,
-                price: (accommodation.price_per_night - (accommodation.price_per_night * (accommodation.promotions[0].discount_percentage / 100))),
+                price:
+                  accommodation.price_per_night -
+                  accommodation.price_per_night *
+                    (accommodation.promotions[0].discount_percentage / 100),
               })
             }
           >
@@ -642,21 +708,21 @@ const styles = StyleSheet.create({
     height: 24,
   },
   amenitiesContainer: {
-    paddingVertical: 10, 
-    flexDirection: "row", 
+    paddingVertical: 10,
+    flexDirection: "row",
     alignItems: "center",
   },
   amenityContainer: {
-    alignItems: "center", 
-    marginHorizontal: 15, 
+    alignItems: "center",
+    marginHorizontal: 15,
     //backgroundColor: 'white',
     borderRadius: 10,
     //padding: 5
   },
   amenityImage: {
-    width: 30, 
+    width: 30,
     height: 30,
-    marginBottom: 5, 
+    marginBottom: 5,
   },
   amenityName: {
     fontSize: 14,
@@ -664,7 +730,35 @@ const styles = StyleSheet.create({
   },
   readMore: {
     color: "#F86D0A",
-    marginLeft: 5, 
+    marginLeft: 5,
+  },
+
+  showImagesButton: {
+    width: '100%',
+    backgroundColor: '#F2F2F2',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: '#F2873B',
+  },
+  showImagesButtonText: {
+    color: '#F2873B',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  flatListContainer: {
+    marginBottom: 10,
+    backgroundColor: 'white',
+    padding: 5,
+    //marginTop: 10,
+    borderRadius: 10,
+  },
+  flatListImage: {
+    width: 382,
+    height: 371,
+    borderRadius: 10,
   },
 });
 

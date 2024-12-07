@@ -6,6 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
@@ -32,108 +35,117 @@ const Login = () => {
       }
     } catch (error) {
       console.error(error);
-      setError("Login failed. Please check your internet connection and try again.");
+      setError("Login failed. Invalid phone number or password.");
     }
   };
-  
-  
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        contentInsetAdjustmentBehavior="automatic"
+      >
+        <View style={styles.header}>
+          <Image
+            source={require("../assets/Ellipse 1.png")}
+            style={styles.ellipse1}
+          />
+          <Image
+            source={require("../assets/Ellipse 2.png")}
+            style={styles.ellipse2}
+          />
+        </View>
+        <Text style={styles.title}>Sign In</Text>
+        <View style={styles.inputContainer}>
+          <Icon name="phone" size={15} color="#888" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            placeholderTextColor="#888"
+            keyboardType="phone-pad"
+            value={phone_number}
+            onChangeText={setPhone}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Icon name="lock" size={20} color="#888" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#888"
+            secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+            <Icon
+              name={passwordVisible ? "eye" : "eye-slash"}
+              size={20}
+              color="#888"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        <TouchableOpacity>
+          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+        </TouchableOpacity>
+        <View style={styles.signUpContainer}>
+          <Text style={styles.signUpText}>Don’t have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.signUpLink}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.orContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.line} />
+        </View>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity>
+            <Image
+              source={require("../assets/logos_google-icon.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              source={require("../assets/logos_facebook.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              source={require("../assets/skill-icons_twitter.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+        </View>
         <Image
-          source={require("../assets/Ellipse 1.png")}
-          style={styles.ellipse1}
+          source={require("../assets/Subtract.png")}
+          style={styles.bottomRightImage}
         />
-        <Image
-          source={require("../assets/Ellipse 2.png")}
-          style={styles.ellipse2}
-        />
-      </View>
-      <Text style={styles.title}>Sign In</Text>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <View style={styles.inputContainer}>
-        <Icon name="phone" size={15} color="#888" style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          placeholderTextColor="#888"
-          keyboardType="phone-pad"
-          value={phone_number}
-          onChangeText={setPhone}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Icon name="lock" size={20} color="#888" style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry={!passwordVisible}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-          <Icon
-            name={passwordVisible ? "eye" : "eye-slash"}
-            size={20}
-            color="#888"
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Sign In</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-      </TouchableOpacity>
-      <View style={styles.signUpContainer}>
-        <Text style={styles.signUpText}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.signUpLink}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.orContainer}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>or</Text>
-        <View style={styles.line} />
-      </View>
-      <View style={styles.iconContainer}>
-        <TouchableOpacity>
-          <Image
-            source={require("../assets/logos_google-icon.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={require("../assets/logos_facebook.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={require("../assets/skill-icons_twitter.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-      </View>
-      <Image
-        source={require("../assets/Subtract.png")}
-        style={styles.bottomRightImage}
-      />
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#EDF6FF",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#EDF6FF",
   },
   header: {
     position: "absolute",
@@ -154,7 +166,7 @@ const styles = StyleSheet.create({
     // height: 120,
     // flexShrink: 0,
     position: "absolute",
-    bottom: -60,
+    bottom: -50,
   },
   title: {
     fontSize: 36,
@@ -259,7 +271,8 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-    marginBottom: 10,
+    //marginBottom: 10,
+    marginTop: 5,
   },
 });
 

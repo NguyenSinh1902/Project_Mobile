@@ -53,6 +53,10 @@ const Book_Hotel = ({ route }) => {
     console.log("Selected Payment Method:", item.label); // Log giá trị được chọn
   };
 
+  const calculateDiscountAmount = (price, discountPercentage) => {
+    return (price * discountPercentage) / 100;
+  };
+
   const showDatePicker = (type) => {
     setIsCheckIn(type);
     setDatePickerVisible(true);
@@ -375,15 +379,42 @@ const Book_Hotel = ({ route }) => {
       <View style={styles.InforGuest}>
         <View style={styles.VoucherCT1}>
           <View style={{ flexDirection: "row" }}>
-            <Image source={require("../assets/ic_baseline-discount.png")} />
-            <Text style={{ fontSize: 16, fontWeight: 500, marginLeft: 3 }}>
-              Voucher
-            </Text>
+            <Image source={require("../assets/ic_baseline-discount.png")} style={{marginTop: 5}} />
+            {accommodation.promotions && accommodation.promotions.length > 0 && (
+          <>
+            {accommodation.promotions.map((promo) => {
+              // Tính số tiền giảm
+              const discountAmount = calculateDiscountAmount(
+                accommodation.price_per_night,
+                promo.discount_percentage
+              );
+
+              return (
+                <View key={promo.promotion_id} style={styles.promotion}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginLeft: 10,
+                      marginTop: 5,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {/* <Image source={require("../assets/tdesign_discount.png")} /> */}
+                    <Text style={{ fontSize: 16, fontWeight: 500 }}>
+                      {promo.discount_percentage}% off, maximum{" "}
+                      {discountAmount.toLocaleString()} VNĐ
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
+          </>
+        )}
           </View>
           <TouchableOpacity style={{ flexDirection: "row" }}>
-            <Text style={{ fontSize: 16, fontWeight: 400, color: "#666" }}>
+            {/* <Text style={{ fontSize: 16, fontWeight: 400, color: "#666" }}>
               Select or enter code
-            </Text>
+            </Text> */}
             <Image
               source={require("../assets/weui_nguoc.png")}
               style={{ marginLeft: 3, marginTop: 3 }}
@@ -395,8 +426,8 @@ const Book_Hotel = ({ route }) => {
 
         <View style={styles.VoucherCT1}>
           <View style={{ flexDirection: "row" }}>
-            <Image source={require("../assets/ic_baseline-discount.png")} />
-            <Text style={{ fontSize: 16, fontWeight: 500, marginLeft: 3 }}>
+            <Image source={require("../assets/openmoji_coin.png")} style={{marginBottom: 5}}/>
+            <Text style={{ fontSize: 16, fontWeight: 500, marginLeft: 5 }}>
               Coins
             </Text>
           </View>

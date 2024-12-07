@@ -33,7 +33,7 @@ const Header_Home = ({ customer }) => {
           source={require("../../assets/heroicons_map-pin-16-solid.png")}
           style={styles.locationIcon}
         />
-        <Text style={styles.locationText}>Dalat</Text>
+        <Text style={styles.locationText}>HCM City</Text>
       </View>
       <View style={styles.buttonContainer}>
         <BlurView intensity={50} tint="dark" style={styles.blurSearch}>

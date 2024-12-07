@@ -22,6 +22,7 @@ import PriceRange from './components/Filter/PriceRange';
 import Amenities from './components/Filter/Amenities';
 import BookingHistory from "./components/BookingHistory";
 import PaymentMethod from "./components/PaymentMethod";
+import ScreenChat from "./components/ChatBot/ScreenChat";
 
 const Stack = createStackNavigator();
 
@@ -127,6 +128,11 @@ const App = () => {
         <Stack.Screen 
           name="PaymentMethod" 
           component={PaymentMethod} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="ScreenChat" 
+          component={ScreenChat} 
           options={{ headerShown: false }} 
         />
       </Stack.Navigator>

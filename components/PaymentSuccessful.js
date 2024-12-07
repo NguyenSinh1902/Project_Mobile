@@ -38,16 +38,16 @@ const PaymentSuccessful = ({ route }) => {
   // Lấy thời gian hiện tại và format theo HH:mm
   const getTime = () => {
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
     return `${hours}:${minutes}`;
   };
 
   // Lấy ngày hiện tại và format theo dd-MM-yyyy
   const getDate = () => {
     const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
     const year = now.getFullYear();
     return `${day}-${month}-${year}`;
   };
@@ -83,9 +83,7 @@ const PaymentSuccessful = ({ route }) => {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Amount</Text>
-            <Text style={styles.value}>
-              {formatPrice(booking.total_price)}
-            </Text>
+            <Text style={styles.value}>{formatPrice(booking.total_price)}</Text>
           </View>
 
           <View
@@ -106,13 +104,20 @@ const PaymentSuccessful = ({ route }) => {
               <Image source={require("../assets/home-button.png")} />
               <Text style={styles.buttonText}>Back to Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.button}
               onPress={() =>
                 navigation.navigate("BookingHistory", {
                   customer: customer,
+                  bookings: [{
+                    ...booking,
+                    time: time,
+                    date: date,
+                    formattedPrice: formatPrice(booking.total_price),
+                  }],
                 })
-              }>
+              }
+            >
               <Image source={require("../assets/mi_share.png")} />
               <Text style={styles.buttonText}>My Booking</Text>
             </TouchableOpacity>
